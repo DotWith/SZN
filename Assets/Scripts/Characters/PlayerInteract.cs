@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Com.Dot.SNC.Characters
+namespace Com.Dot.SZN.Characters
 {
     public class PlayerInteract : NetworkBehaviour
     {
@@ -66,7 +66,7 @@ namespace Com.Dot.SNC.Characters
             int mask = 1 << interactableLayer.value | excludeLayer.value;
             if (Physics.Raycast(ray.origin, ray.direction, out RaycastHit hit, distance, mask, QueryTriggerInteraction.Ignore))
             {
-                if (hit.collider.CompareTag(LayerMask.LayerToName(interactableLayer.value)))
+                if (hit.collider.gameObject.layer == interactableLayer.value)
                 {
                     return hit.collider.gameObject;
                 }
@@ -91,9 +91,9 @@ namespace Com.Dot.SNC.Characters
             {
                 if (Physics.Linecast(ray.origin, hit.point, out RaycastHit hitInfo, excludeLayer, QueryTriggerInteraction.Ignore))
                 {
-                    if (hitInfo.collider.CompareTag(hit.collider.tag))
+                    if (hitInfo.collider.gameObject.layer == hit.collider.gameObject.layer)
                     {
-                        return hit.collider.gameObject;
+                        return hitInfo.collider.gameObject;
                     }
                     continue;
                 }

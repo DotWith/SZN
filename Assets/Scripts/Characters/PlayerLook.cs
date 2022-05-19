@@ -1,7 +1,7 @@
 using Mirror;
 using UnityEngine;
 
-namespace Com.Dot.SNC.Characters
+namespace Com.Dot.SZN.Characters
 {
     public class PlayerLook : NetworkBehaviour
     {

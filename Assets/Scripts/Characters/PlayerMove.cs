@@ -1,7 +1,7 @@
 using UnityEngine;
 using Mirror;
 
-namespace Com.Dot.SNC.Characters
+namespace Com.Dot.SZN.Characters
 {
     public class PlayerMove : NetworkBehaviour
     {

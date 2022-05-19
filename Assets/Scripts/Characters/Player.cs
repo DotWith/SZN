@@ -1,10 +1,10 @@
-using Com.Dot.SNC.Input;
+using Com.Dot.SZN.Input;
 using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Com.Dot.SNC.Characters
+namespace Com.Dot.SZN.Characters
 {
     public class Player : NetworkBehaviour
     {
