@@ -396,6 +396,7 @@ MonoBehaviour:
   player: {fileID: 8304273610227629815}
   gravity: -13
   movementSpeed: 9
+  jumpForce: 5
 --- !u!114 &7461004277963046712
 MonoBehaviour:
   m_ObjectHideFlags: 0

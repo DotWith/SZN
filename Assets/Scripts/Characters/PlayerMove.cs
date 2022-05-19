@@ -1,5 +1,6 @@
 using UnityEngine;
 using Mirror;
+using System.Collections;
 
 namespace Com.Dot.SZN.Characters
 {
@@ -10,7 +11,9 @@ namespace Com.Dot.SZN.Characters
         [Space]
         [SerializeField] float gravity = -13.0f;
         [SerializeField] float movementSpeed;
+        [SerializeField] float jumpForce;
 
+        bool isJumping = false;
         float velocityY = 0.0f;
         Vector2 previousInput;
         
@@ -20,6 +23,7 @@ namespace Com.Dot.SZN.Characters
 
             player.Controls.Player.Move.performed += ctx => SetMovement(ctx.ReadValue<Vector2>());
             player.Controls.Player.Move.canceled += ctx => ResetMovement();
+            player.Controls.Player.Jump.performed += ctx => Jump();
         }
 
         [ClientCallback]
@@ -47,6 +51,26 @@ namespace Com.Dot.SZN.Characters
             Vector3 movement = (right.normalized * previousInput.x + forward.normalized * previousInput.y) * movementSpeed + Vector3.up * velocityY;
 
             player.controller.Move(movement * Time.deltaTime);
+        }
+
+        [Client]
+        void Jump()
+        {
+            if (isJumping) { return; }
+
+            isJumping = true;
+            StartCoroutine(JumpEvent());
+        }
+
+        IEnumerator JumpEvent()
+        {
+            do
+            {
+                player.controller.Move(Vector3.up * jumpForce * Time.deltaTime);
+                yield return null;
+            } while (!player.controller.isGrounded && player.controller.collisionFlags != CollisionFlags.Above);
+
+            isJumping = false;
         }
     }
 }
