@@ -64,10 +64,9 @@ namespace Com.Dot.SNC.Characters
         GameObject Raycast(Ray ray, float distance)
         {
             int mask = 1 << interactableLayer.value | excludeLayer.value;
-            Debug.DrawLine(ray.origin, ray.origin + ray.direction * distance, Color.magenta);
             if (Physics.Raycast(ray.origin, ray.direction, out RaycastHit hit, distance, mask, QueryTriggerInteraction.Ignore))
             {
-                if (hit.collider.CompareTag(interactableLayer.ToString()))
+                if (hit.collider.CompareTag(LayerMask.LayerToName(interactableLayer.value)))
                 {
                     return hit.collider.gameObject;
                 }
@@ -90,7 +89,6 @@ namespace Com.Dot.SNC.Characters
 
             foreach (RaycastHit hit in hits)
             {
-                Debug.DrawLine(ray.origin, hit.point, Color.red);
                 if (Physics.Linecast(ray.origin, hit.point, out RaycastHit hitInfo, excludeLayer, QueryTriggerInteraction.Ignore))
                 {
                     if (hitInfo.collider.CompareTag(hit.collider.tag))

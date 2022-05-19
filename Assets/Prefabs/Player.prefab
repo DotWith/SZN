@@ -432,7 +432,7 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 256
-  wallLayer:
+  excludeLayer:
     serializedVersion: 2
     m_Bits: 1
 --- !u!114 &907478686577062319
