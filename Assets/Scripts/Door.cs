@@ -12,12 +12,14 @@ public class Door : NetworkBehaviour, IInteractable
     [SerializeField] float speed = 1f;
 
     Vector3 defaultRotation;
+    Vector3 forward;
 
     Coroutine animationCoroutine;
 
     public void Start()
     {
         defaultRotation = transform.eulerAngles;
+        forward = transform.right;
     }
 
     public void Interact() => CmdInteract();
@@ -46,7 +48,7 @@ public class Door : NetworkBehaviour, IInteractable
             StopCoroutine(animationCoroutine);
         }
 
-        float dot = Vector3.Dot(transform.up, (userPosition - transform.position).normalized);
+        float dot = Vector3.Dot(forward, (userPosition - transform.position).normalized);
         animationCoroutine = StartCoroutine(DoRotationOpen(dot));
     }
 
@@ -63,7 +65,7 @@ public class Door : NetworkBehaviour, IInteractable
 
     IEnumerator DoRotationOpen(float dot)
     {
-        float targetRotation = Mathf.Sign(dot) * 90f;
+        float targetRotation = -Mathf.Sign(dot) * 90f;
 
         doorState = DoorState.Opened;
 
