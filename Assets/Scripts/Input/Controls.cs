@@ -64,6 +64,15 @@ namespace Com.Dot.SZN.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Debug"",
+                    ""type"": ""Button"",
+                    ""id"": ""b3840b0a-f09c-4e29-a103-315a57628dd5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -154,6 +163,17 @@ namespace Com.Dot.SZN.Input
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""160af729-44a7-42ca-8272-ff19a4f19d36"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Debug"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -166,6 +186,7 @@ namespace Com.Dot.SZN.Input
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
             m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
             m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+            m_Player_Debug = m_Player.FindAction("Debug", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -229,6 +250,7 @@ namespace Com.Dot.SZN.Input
         private readonly InputAction m_Player_Jump;
         private readonly InputAction m_Player_Look;
         private readonly InputAction m_Player_Interact;
+        private readonly InputAction m_Player_Debug;
         public struct PlayerActions
         {
             private @Controls m_Wrapper;
@@ -237,6 +259,7 @@ namespace Com.Dot.SZN.Input
             public InputAction @Jump => m_Wrapper.m_Player_Jump;
             public InputAction @Look => m_Wrapper.m_Player_Look;
             public InputAction @Interact => m_Wrapper.m_Player_Interact;
+            public InputAction @Debug => m_Wrapper.m_Player_Debug;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -258,6 +281,9 @@ namespace Com.Dot.SZN.Input
                     @Interact.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
                     @Interact.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
                     @Interact.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
+                    @Debug.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug;
+                    @Debug.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug;
+                    @Debug.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug;
                 }
                 m_Wrapper.m_PlayerActionsCallbackInterface = instance;
                 if (instance != null)
@@ -274,6 +300,9 @@ namespace Com.Dot.SZN.Input
                     @Interact.started += instance.OnInteract;
                     @Interact.performed += instance.OnInteract;
                     @Interact.canceled += instance.OnInteract;
+                    @Debug.started += instance.OnDebug;
+                    @Debug.performed += instance.OnDebug;
+                    @Debug.canceled += instance.OnDebug;
                 }
             }
         }
@@ -284,6 +313,7 @@ namespace Com.Dot.SZN.Input
             void OnJump(InputAction.CallbackContext context);
             void OnLook(InputAction.CallbackContext context);
             void OnInteract(InputAction.CallbackContext context);
+            void OnDebug(InputAction.CallbackContext context);
         }
     }
 }

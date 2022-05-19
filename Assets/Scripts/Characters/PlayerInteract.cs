@@ -1,3 +1,4 @@
+using Com.Dot.SZN.Interfaces;
 using Mirror;
 using System.Collections.Generic;
 using System.Linq;

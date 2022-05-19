@@ -1,3 +1,4 @@
+using Com.Dot.SZN.Interfaces;
 using Mirror;
 using System.Collections;
 using UnityEngine;
@@ -30,10 +31,10 @@ public class Door : NetworkBehaviour, IInteractable
         switch (doorState)
         {
             case DoorState.Opened:
-                CloseDoor();
+                RpcCloseDoor();
                 break;
             case DoorState.Closed:
-                OpenDoor(sender.identity.transform.position);
+                RpcOpenDoor(sender.identity.transform.position);
                 break;
             case DoorState.Locked:
                 break;
@@ -41,7 +42,7 @@ public class Door : NetworkBehaviour, IInteractable
     }
 
     [ClientRpc]
-    void OpenDoor(Vector3 userPosition)
+    void RpcOpenDoor(Vector3 userPosition)
     {
         if (animationCoroutine != null)
         {
@@ -53,7 +54,7 @@ public class Door : NetworkBehaviour, IInteractable
     }
 
     [ClientRpc]
-    void CloseDoor()
+    void RpcCloseDoor()
     {
         if (animationCoroutine != null)
         {
