@@ -14,11 +14,11 @@ public class Item : NetworkBehaviour, IInteractable
     [Command(requiresAuthority = false)]
     void CmdInteract(NetworkConnectionToClient sender = null)
     {
-        sender.identity.GetComponent<Player>().Inventory.AddItem(itemInfo);
+        sender.identity.GetComponent<PlayerInventory>().AddItem(itemInfo);
         RpcDestoryActor();
     }
 
-    [ClientRpc]
+    //[ClientRpc]
     void RpcDestoryActor()
     {
         Destroy(gameObject);
