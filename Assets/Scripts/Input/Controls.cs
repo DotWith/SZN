@@ -91,6 +91,15 @@ namespace Com.Dot.SZN.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Drop"",
+                    ""type"": ""Button"",
+                    ""id"": ""be6585c2-4ae1-47f6-9d20-9eb598fb575d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -214,6 +223,17 @@ namespace Com.Dot.SZN.Input
                     ""action"": ""Inventory2"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a74a3893-7aa9-4875-a68e-50b327829a75"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -229,6 +249,7 @@ namespace Com.Dot.SZN.Input
             m_Player_Debug = m_Player.FindAction("Debug", throwIfNotFound: true);
             m_Player_Inventory1 = m_Player.FindAction("Inventory1", throwIfNotFound: true);
             m_Player_Inventory2 = m_Player.FindAction("Inventory2", throwIfNotFound: true);
+            m_Player_Drop = m_Player.FindAction("Drop", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -295,6 +316,7 @@ namespace Com.Dot.SZN.Input
         private readonly InputAction m_Player_Debug;
         private readonly InputAction m_Player_Inventory1;
         private readonly InputAction m_Player_Inventory2;
+        private readonly InputAction m_Player_Drop;
         public struct PlayerActions
         {
             private @Controls m_Wrapper;
@@ -306,6 +328,7 @@ namespace Com.Dot.SZN.Input
             public InputAction @Debug => m_Wrapper.m_Player_Debug;
             public InputAction @Inventory1 => m_Wrapper.m_Player_Inventory1;
             public InputAction @Inventory2 => m_Wrapper.m_Player_Inventory2;
+            public InputAction @Drop => m_Wrapper.m_Player_Drop;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -336,6 +359,9 @@ namespace Com.Dot.SZN.Input
                     @Inventory2.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInventory2;
                     @Inventory2.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInventory2;
                     @Inventory2.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInventory2;
+                    @Drop.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrop;
+                    @Drop.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrop;
+                    @Drop.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrop;
                 }
                 m_Wrapper.m_PlayerActionsCallbackInterface = instance;
                 if (instance != null)
@@ -361,6 +387,9 @@ namespace Com.Dot.SZN.Input
                     @Inventory2.started += instance.OnInventory2;
                     @Inventory2.performed += instance.OnInventory2;
                     @Inventory2.canceled += instance.OnInventory2;
+                    @Drop.started += instance.OnDrop;
+                    @Drop.performed += instance.OnDrop;
+                    @Drop.canceled += instance.OnDrop;
                 }
             }
         }
@@ -374,6 +403,7 @@ namespace Com.Dot.SZN.Input
             void OnDebug(InputAction.CallbackContext context);
             void OnInventory1(InputAction.CallbackContext context);
             void OnInventory2(InputAction.CallbackContext context);
+            void OnDrop(InputAction.CallbackContext context);
         }
     }
 }

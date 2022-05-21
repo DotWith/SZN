@@ -9,7 +9,7 @@ namespace Com.Dot.SZN.Characters
         [SerializeField] Player player;
 
         [Space]
-        [SerializeField] Transform itemSpawn = null;
+        [SerializeField] Transform itemHolder;
         [SerializeField] int viewModelLayer;
 
         /// <summary>
@@ -22,34 +22,7 @@ namespace Com.Dot.SZN.Characters
         /// </summary>
         public List<GameObject> itemArray = new List<GameObject>();
 
-        /// <summary>
-        /// The current item for this inventory
-        /// </summary>
-        [SyncVar(hook = nameof(OnItemChanged))]
-        int activeItemSynced = -1;
-
         GameObject activeItemPrefab;
-
-        void OnItemChanged(int _Old, int _New)
-        {
-            if (activeItemPrefab != null)
-            {
-                Destroy(activeItemPrefab);
-                NetworkServer.UnSpawn(activeItemPrefab);
-            }
-
-            if (itemArray.Count <= _New) { return; }
-
-            GameObject item = itemArray[_New];
-
-            if (item == null) { return; }
-
-            activeItemPrefab = Instantiate(item);
-            NetworkServer.Spawn(activeItemPrefab);
-            activeItemPrefab.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
-            activeItemPrefab.GetComponent<Item>().holder = itemSpawn;
-            //activeItemPrefab.layer = viewModelLayer; // TODO: Change this to a LayerMask
-        }
 
         public override void OnStartAuthority()
         {
@@ -57,6 +30,8 @@ namespace Com.Dot.SZN.Characters
 
             player.Controls.Player.Inventory1.performed += ctx => CmdChangeActiveItem(0);
             player.Controls.Player.Inventory2.performed += ctx => CmdChangeActiveItem(1);
+
+            player.Controls.Player.Drop.performed += ctx => CmdDropActiveItem();
         }
 
         public void AddItem(GameObject prefab)
@@ -67,6 +42,45 @@ namespace Com.Dot.SZN.Characters
         }
 
         [Command]
-        public void CmdChangeActiveItem(int newIndex) => activeItemSynced = newIndex;
+        public void CmdChangeActiveItem(int newIndex)
+        {
+            if (activeItemPrefab != null)
+            {
+                Destroy(activeItemPrefab);
+                NetworkServer.UnSpawn(activeItemPrefab);
+            }
+
+            if (itemArray.Count <= newIndex) { return; }
+
+            GameObject item = itemArray[newIndex];
+
+            if (item == null) { return; }
+
+            activeItemPrefab = Instantiate(item);
+            NetworkServer.Spawn(activeItemPrefab);
+            activeItemPrefab.GetComponent<NetworkIdentity>().RemoveClientAuthority();
+            activeItemPrefab.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
+            activeItemPrefab.GetComponent<Item>().holder = transform;
+            RpcSetCollision(activeItemPrefab.GetComponent<Item>(), false);
+            //item.gameObject.layer = viewModelLayer; // TODO: Change this to a LayerMask
+        }
+
+        [ClientRpc]
+        void RpcSetCollision(Item item, bool enable)
+        {
+            foreach (var collider in item.colliders)
+            {
+                collider.enabled = enable;
+            }
+        }
+
+        [Command]
+        public void CmdDropActiveItem()
+        {
+            if (activeItemPrefab == null) { return; }
+
+            activeItemPrefab.GetComponent<Item>().holder = null;
+            RpcSetCollision(activeItemPrefab.GetComponent<Item>(), true);
+        }
     }
 }

@@ -6,6 +6,7 @@ using UnityEngine;
 public class Item : NetworkBehaviour, IInteractable
 {
     [SerializeField] GameObject itemPrefab;
+    public Collider[] colliders;
 
     [SyncVar]
     public Transform holder;
@@ -16,14 +17,7 @@ public class Item : NetworkBehaviour, IInteractable
     void CmdInteract(NetworkConnectionToClient sender = null)
     {
         sender.identity.GetComponent<PlayerInventory>().AddItem(itemPrefab);
-
-        ServerDestroyObject();
-    }
-
-    [Server]
-    void ServerDestroyObject()
-    {
-        Destroy(gameObject);
+        NetworkServer.Destroy(gameObject);
     }
 
     public void Update()

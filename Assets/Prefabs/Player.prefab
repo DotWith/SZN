@@ -575,7 +575,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   player: {fileID: 8304273610227629815}
-  itemSpawn: {fileID: 6468328595946429928}
+  itemHolder: {fileID: 6468328595946429928}
   viewModelLayer: 9
   itemArray: []
 --- !u!114 &907478686577062319
