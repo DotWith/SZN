@@ -1,7 +1,5 @@
 using Com.Dot.SZN.Input;
 using Mirror;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Com.Dot.SZN.Characters

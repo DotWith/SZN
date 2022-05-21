@@ -1,4 +1,5 @@
 using Mirror;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Com.Dot.SZN.Characters
@@ -12,24 +13,14 @@ namespace Com.Dot.SZN.Characters
         [SerializeField] int viewModelLayer;
 
         /// <summary>
-        /// The items the inventory contains
-        /// </summary>
-        internal SimpleItem[] itemArray;
-
-        int maxItems;
-
-        /// <summary>
         /// The max items for this inventory
         /// </summary>
-        internal int MaxItems
-        {
-            get { return maxItems; }
-            set
-            {
-                itemArray = new SimpleItem[value];
-                maxItems = value;
-            }
-        }
+        const int MaxItems = 2;
+
+        /// <summary>
+        /// The items the inventory contains
+        /// </summary>
+        public List<GameObject> itemArray = new List<GameObject>();
 
         /// <summary>
         /// The current item for this inventory
@@ -41,62 +32,41 @@ namespace Com.Dot.SZN.Characters
 
         void OnItemChanged(int _Old, int _New)
         {
-            if (itemArray.Length < _New) { return; }
-
-            SimpleItem item = itemArray[_New];
-
             if (activeItemPrefab != null)
-                Destroy(activeItemPrefab);
-            else if (item.modelPrefab != null)
             {
-                activeItemPrefab = Instantiate(item.modelPrefab, itemSpawn);
-                activeItemPrefab.layer = viewModelLayer; // TODO: Change this to a LayerMask
+                Destroy(activeItemPrefab);
+                NetworkServer.UnSpawn(activeItemPrefab);
             }
+
+            if (itemArray.Count <= _New) { return; }
+
+            GameObject item = itemArray[_New];
+
+            if (item == null) { return; }
+
+            activeItemPrefab = Instantiate(item);
+            NetworkServer.Spawn(activeItemPrefab);
+            activeItemPrefab.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
+            activeItemPrefab.GetComponent<Item>().holder = itemSpawn;
+            //activeItemPrefab.layer = viewModelLayer; // TODO: Change this to a LayerMask
         }
 
         public override void OnStartAuthority()
         {
-            MaxItems = 2;
-
             enabled = true;
 
             player.Controls.Player.Inventory1.performed += ctx => CmdChangeActiveItem(0);
             player.Controls.Player.Inventory2.performed += ctx => CmdChangeActiveItem(1);
         }
 
-        public void AddItem(SimpleItem item) => itemArray.SetValue(item, GetAvailableSlotIndex());
+        public void AddItem(GameObject prefab)
+        {
+            if (itemArray.Count >= MaxItems) { return; }
+
+            itemArray.Add(prefab);
+        }
 
         [Command]
         public void CmdChangeActiveItem(int newIndex) => activeItemSynced = newIndex;
-
-        /// <summary>
-        /// Ireatate through each item until we find a available slot to place our item
-        /// </summary>
-        /// <returns></returns>
-        int GetAvailableSlotIndex()
-        {
-            for (int i = 0; i < MaxItems; i++)
-            {
-                if (itemArray.GetValue(i) != null)
-                {
-                    return i;
-                }
-            }
-
-            return 0; // IDK how anyone would get here
-        }
-    }
-
-    /// <summary>
-    /// This can be extended for other item types.
-    /// </summary>
-    [System.Serializable]
-    public struct SimpleItem
-    {
-        public string name;
-        [TextArea]
-        public string description;
-        public Sprite icon;
-        public GameObject modelPrefab;
     }
 }

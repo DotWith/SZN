@@ -24,6 +24,8 @@ namespace Com.Dot.SZN.Characters
 
         void Look(Vector2 lookAxis)
         {
+            if (player.playerCamera == null) { return; }
+
             cameraPitch -= lookAxis.y * mouseSensitivity;
 
             cameraPitch = Mathf.Clamp(cameraPitch, -90.0f, 90.0f);

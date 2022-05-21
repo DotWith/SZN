@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6928932007305124318}
   - component: {fileID: 6173610912930463289}
-  - component: {fileID: 1666219663106376095}
   - component: {fileID: 2691624282890242578}
+  - component: {fileID: 1666219663106376095}
   m_Layer: 8
   m_Name: Item
   m_TagString: Untagged
@@ -49,17 +49,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  itemInfo:
-    name: Book
-    description: 'A book is a medium for recording information in the form of writing
-      or images, typically composed of many pages (made of papyrus, parchment, vellum,
-      or paper) bound together and protected by a cover.[1] The technical term for
-      this physical arrangement is codex (plural, codices). In the history of hand-held
-      physical supports for extended written compositions or records, the codex replaces
-      its predecessor, the scroll. A single sheet in a codex is a leaf and each side
-      of a leaf is a page. '
-    icon: {fileID: 21300000, guid: 7adc74c395b875d45b1778ac2711339e, type: 3}
-    modelPrefab: {fileID: 919132149155446097, guid: 3740940caab088444bb95a968544e92d, type: 3}
+  thisPrefab: {fileID: 3486250070028003002}
+--- !u!65 &2691624282890242578
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3486250070028003002}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.04697644, y: 0.3012012, z: 0.21915366}
+  m_Center: {x: 0.021505963, y: 0.14981563, z: -0.10805554}
 --- !u!114 &1666219663106376095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77,19 +80,6 @@ MonoBehaviour:
   visible: 0
   m_AssetId: 44a230f5c807a48408ce6bebe0a5f30e
   hasSpawned: 0
---- !u!65 &2691624282890242578
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3486250070028003002}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.04697644, y: 0.3012012, z: 0.21915366}
-  m_Center: {x: 0.021505963, y: 0.14981563, z: -0.10805554}
 --- !u!1001 &2981112530566250614
 PrefabInstance:
   m_ObjectHideFlags: 0
