@@ -9,8 +9,10 @@ namespace Com.Dot.SZN.Characters
         [SerializeField] Player player;
 
         [Space]
+        [SerializeField] GameObject itemPrefab;
         [SerializeField] Transform itemHolder;
         [SerializeField] int viewModelLayer;
+        [SerializeField] int defaultLayer;
 
         /// <summary>
         /// The max items for this inventory
@@ -34,11 +36,11 @@ namespace Com.Dot.SZN.Characters
             player.Controls.Player.Drop.performed += ctx => CmdDropActiveItem();
         }
 
-        public void AddItem(GameObject prefab)
+        public void AddItem()
         {
             if (itemArray.Count >= MaxItems) { return; }
 
-            itemArray.Add(prefab);
+            itemArray.Add(itemPrefab);
         }
 
         [Command]
@@ -62,6 +64,7 @@ namespace Com.Dot.SZN.Characters
             activeItemPrefab.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
             activeItemPrefab.GetComponent<Item>().holder = transform;
             RpcSetCollision(activeItemPrefab.GetComponent<Item>(), false);
+            SetItemLayer(activeItemPrefab, true);
             //item.gameObject.layer = viewModelLayer; // TODO: Change this to a LayerMask
         }
 
@@ -71,6 +74,16 @@ namespace Com.Dot.SZN.Characters
             foreach (var collider in item.colliders)
             {
                 collider.enabled = enable;
+                collider.gameObject.layer = viewModelLayer;
+            }
+        }
+
+        [Client]
+        void SetItemLayer(GameObject item, bool viewmodel)
+        {
+            foreach (var renderer in item.GetComponentsInChildren<Renderer>())
+            {
+                renderer.gameObject.layer = viewmodel ? viewModelLayer : defaultLayer;
             }
         }
 
@@ -81,6 +94,8 @@ namespace Com.Dot.SZN.Characters
 
             activeItemPrefab.GetComponent<Item>().holder = null;
             RpcSetCollision(activeItemPrefab.GetComponent<Item>(), true);
+            SetItemLayer(activeItemPrefab, false);
+            activeItemPrefab = null;
         }
     }
 }
