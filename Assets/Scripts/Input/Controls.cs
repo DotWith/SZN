@@ -100,6 +100,15 @@ namespace Com.Dot.SZN.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""VoiceChat"",
+                    ""type"": ""Button"",
+                    ""id"": ""40c43156-7479-4710-9dec-cc8f0bfc7541"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -234,6 +243,17 @@ namespace Com.Dot.SZN.Input
                     ""action"": ""Drop"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a520c682-01d3-471c-b9a2-a827dbbe35ed"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""VoiceChat"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -250,6 +270,7 @@ namespace Com.Dot.SZN.Input
             m_Player_Inventory1 = m_Player.FindAction("Inventory1", throwIfNotFound: true);
             m_Player_Inventory2 = m_Player.FindAction("Inventory2", throwIfNotFound: true);
             m_Player_Drop = m_Player.FindAction("Drop", throwIfNotFound: true);
+            m_Player_VoiceChat = m_Player.FindAction("VoiceChat", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -317,6 +338,7 @@ namespace Com.Dot.SZN.Input
         private readonly InputAction m_Player_Inventory1;
         private readonly InputAction m_Player_Inventory2;
         private readonly InputAction m_Player_Drop;
+        private readonly InputAction m_Player_VoiceChat;
         public struct PlayerActions
         {
             private @Controls m_Wrapper;
@@ -329,6 +351,7 @@ namespace Com.Dot.SZN.Input
             public InputAction @Inventory1 => m_Wrapper.m_Player_Inventory1;
             public InputAction @Inventory2 => m_Wrapper.m_Player_Inventory2;
             public InputAction @Drop => m_Wrapper.m_Player_Drop;
+            public InputAction @VoiceChat => m_Wrapper.m_Player_VoiceChat;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -362,6 +385,9 @@ namespace Com.Dot.SZN.Input
                     @Drop.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrop;
                     @Drop.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrop;
                     @Drop.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrop;
+                    @VoiceChat.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVoiceChat;
+                    @VoiceChat.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVoiceChat;
+                    @VoiceChat.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVoiceChat;
                 }
                 m_Wrapper.m_PlayerActionsCallbackInterface = instance;
                 if (instance != null)
@@ -390,6 +416,9 @@ namespace Com.Dot.SZN.Input
                     @Drop.started += instance.OnDrop;
                     @Drop.performed += instance.OnDrop;
                     @Drop.canceled += instance.OnDrop;
+                    @VoiceChat.started += instance.OnVoiceChat;
+                    @VoiceChat.performed += instance.OnVoiceChat;
+                    @VoiceChat.canceled += instance.OnVoiceChat;
                 }
             }
         }
@@ -404,6 +433,7 @@ namespace Com.Dot.SZN.Input
             void OnInventory1(InputAction.CallbackContext context);
             void OnInventory2(InputAction.CallbackContext context);
             void OnDrop(InputAction.CallbackContext context);
+            void OnVoiceChat(InputAction.CallbackContext context);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace Com.Dot.SZN.Characters
         }
 
         [Command]
-        public void CmdChangeActiveItem(int newIndex)
+        void CmdChangeActiveItem(int newIndex)
         {
             if (activeItemPrefab != null)
             {
