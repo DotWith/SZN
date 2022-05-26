@@ -2,7 +2,7 @@
     "name": "Kcipp",
     "rootNamespace": "",
     "references": [
-        "GUID:30817c1a0e6d646d99c048fc403f5979"
+        "Mirror"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

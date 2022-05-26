@@ -17,15 +17,7 @@ namespace Kcipp
         });
         public bool AlwaysTalk = false;
 
-        [Header("Voice Chat Settings")]
-        [Tooltip("Its frequency of input (mic) in khz")]
-        public int micFrequency = 44100;
-
-        [Tooltip("If its lower you might hear \"clipping\"")]
-        public int micSamplePacketSize = 7350;
-
         int lastSample;
-        int localChannel;
 
         int micPosition;
         AudioClip micAudioClip;
@@ -34,20 +26,13 @@ namespace Kcipp
 
         public override void OnStartServer()
         {
-            KcippClient newClient = new KcippClient()
-            {
-                plr = this,
-                channel = 1
-            };
-
-            KcippManager.singleton.voiceChatClients.Add(newClient);
+            KcippManager.singleton.voiceChatChannels.Add(this, 1);
         }
 
         public override void OnStartLocalPlayer()
         {
-            micAudioClip = AudioClip.Create("mic", 1, 1, 24000, false);
-
-            micAudioClip = Microphone.Start(null, true, 120, 24000);
+            micAudioClip = Microphone.Start(null, true,
+                KcippManager.singleton.micRecordLenght, KcippManager.singleton.micFrequency);
         }
 
         public void Update()
@@ -63,13 +48,13 @@ namespace Kcipp
 
             if (timedMicLevel >= 0.07f)
             {
-                if (micPosition > 128)
+                if (micPosition > KcippManager.singleton.micRecordLenght)
                 {
-                    float[] sa = new float[(micPosition - 128) * micAudioClip.channels];
-                    micAudioClip.GetData(sa, micPosition - 128);
+                    float[] sa = new float[(micPosition - KcippManager.singleton.micRecordLenght) * micAudioClip.channels];
+                    micAudioClip.GetData(sa, micPosition - KcippManager.singleton.micRecordLenght);
 
                     float levelMax = 0;
-                    for (int i = 0; i < 128; i++)
+                    for (int i = 0; i < KcippManager.singleton.micRecordLenght; i++)
                     {
                         float wavePeak = sa[i] * sa[i];
                         if (levelMax < wavePeak)
@@ -98,7 +83,7 @@ namespace Kcipp
         {
             int diff = micPosition - lastSample;
 
-            if (diff >= micSamplePacketSize)
+            if (diff >= KcippManager.singleton.micSamplePacketSize)
             {
                 float[] samples = new float[diff * micAudioClip.channels];
                 micAudioClip.GetData(samples, lastSample);
@@ -113,7 +98,7 @@ namespace Kcipp
         public void SendProximityVoice()
         {
             int diff = micPosition - lastSample;
-            if (diff >= micSamplePacketSize)
+            if (diff >= KcippManager.singleton.micSamplePacketSize)
             {
                 float[] samples = new float[diff * micAudioClip.channels];
                 micAudioClip.GetData(samples, lastSample);
@@ -128,18 +113,18 @@ namespace Kcipp
         [Command]
         public void CmdSendProximityVoice(byte[] ba)
         {
-            foreach (var vckp in KcippManager.singleton.voiceChatClients)
+            foreach (var vckp in KcippManager.singleton.voiceChatChannels)
             {
-                if (vckp.plr)
+                if (vckp.Key)
                 {
-                    if (vckp.plr != this && (transform.position - vckp.plr.transform.position).sqrMagnitude < KcippManager.singleton.maxDistance)
+                    if (vckp.Key != this && (transform.position - vckp.Key.transform.position).sqrMagnitude < KcippManager.singleton.maxDistance)
                     {
-                        TargetRpcReciveVoice(vckp.plr.connectionToClient, ba);
+                        TargetRpcReciveVoice(vckp.Key.connectionToClient, ba);
                     }
                 }
                 else
                 {
-                    KcippManager.singleton.voiceChatClients.Remove(vckp);
+                    KcippManager.singleton.voiceChatChannels.Remove(vckp.Key);
                 }
             }
         }
@@ -147,8 +132,7 @@ namespace Kcipp
         [Command]
         public void CmdChangeChannel(byte channel)
         {
-            // TODO: Redo
-            //KcippManager.singleton.voiceChatClients[this] = channel;
+            KcippManager.singleton.voiceChatChannels[this] = channel;
         }
 
         [TargetRpc]
@@ -169,18 +153,21 @@ namespace Kcipp
         [Command]
         public void CmdSendVoice(byte[] ba)
         {
-            foreach (var pl in KcippManager.singleton.voiceChatClients)
+            Dictionary<KcippPlayer, byte> voiceChatChannels = KcippManager.singleton.voiceChatChannels;
+            byte channel = voiceChatChannels[this];
+
+            foreach (var pl in voiceChatChannels)
             {
-                if (pl.plr)
+                if (pl.Key)
                 {
-                    if (pl.channel == localChannel && pl.plr != this)
+                    if (pl.Value == channel && pl.Key != this)
                     {
-                        TargetRpcReciveVoice(pl.plr.connectionToClient, ba);
+                        TargetRpcReciveVoice(pl.Key.connectionToClient, ba);
                     }
                 }
                 else
                 {
-                    KcippManager.singleton.voiceChatClients.Remove(pl);
+                    KcippManager.singleton.voiceChatChannels.Remove(pl.Key);
                 }
             }
         }
@@ -188,7 +175,7 @@ namespace Kcipp
         void ParseVoiceData(byte[] ba)
         {
             float[] f = ToFloatArray(ba);
-            AudioClip ac = AudioClip.Create("voice", f.Length, 1, micFrequency, false);
+            AudioClip ac = AudioClip.Create("voice", f.Length, 1, KcippManager.singleton.micFrequency, false);
             ac.SetData(f, 0);
             audioSource.clip = ac;
             if (!audioSource.isPlaying) audioSource.Play();

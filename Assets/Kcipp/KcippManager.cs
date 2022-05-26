@@ -13,17 +13,34 @@ namespace Kcipp
 		[FormerlySerializedAs("m_MaxDistance")]
 		public float maxDistance = 500f / 2f;
 
-		/*[FormerlySerializedAs("m_VoiceChatChannels")]
-		internal Dictionary<KcippPlayer, byte> voiceChatChannels = new Dictionary<KcippPlayer, byte>();*/
+		[FormerlySerializedAs("m_MicFrequency")]
+		[Tooltip("Its frequency of input (mic) in khz")]
+		public int micFrequency;
 
-        [FormerlySerializedAs("m_VoiceChatClients")]
-        internal List<KcippClient> voiceChatClients = new List<KcippClient>();
+		[FormerlySerializedAs("m_MicRecordLenght")]
+		[Tooltip("Its in loop but its for saving resources (because audio clip cannot be eg. 1hour long)")]
+		public int micRecordLenght = 120;
+
+		[FormerlySerializedAs("m_MicSamplePacketSize")]
+		[Tooltip("If its lower you might hear \"clipping\"")]
+		public int micSamplePacketSize = 7350;
+
+		[FormerlySerializedAs("m_VoiceChatChannels"), HideInInspector]
+		public Dictionary<KcippPlayer, byte> voiceChatChannels = new Dictionary<KcippPlayer, byte>();
+
+        [FormerlySerializedAs("m_VoiceChatClients"), HideInInspector]
+        public List<KcippClient> voiceChatClients = new List<KcippClient>();
 
 		/// <summary>The one and only KcippManager</summary>
 		public static KcippManager singleton { get; internal set; }
 
-		bool DictToList;
-		bool ListToDict;
+		bool dictToList;
+		bool listToDict;
+
+		public void Reset()
+		{
+			micFrequency = AudioSettings.outputSampleRate;
+		}
 
 		public void Awake()
         {
@@ -31,11 +48,11 @@ namespace Kcipp
 			DontDestroyOnLoad(gameObject);
         }
 
-		/*public void Update()
+		public void Update()
 		{
-			if (DictToList)
+			if (dictToList)
 			{
-				DictToList = false;
+				dictToList = false;
 				voiceChatClients.Clear();
 				foreach (var kvp in voiceChatChannels)
 				{
@@ -48,15 +65,15 @@ namespace Kcipp
 					voiceChatClients.Add(newClient);
 				}
 			}
-			else if (ListToDict)
+			else if (listToDict)
 			{
-				ListToDict = false;
+				listToDict = false;
 				voiceChatChannels.Clear();
 				foreach (var vc in voiceChatClients)
 				{
 					voiceChatChannels.Add(vc.plr, vc.channel);
 				}
 			}
-		}*/
+		}
 	}
 }
