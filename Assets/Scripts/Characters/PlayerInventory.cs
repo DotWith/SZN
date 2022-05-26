@@ -1,3 +1,4 @@
+using Com.Dot.SZN.Interactables;
 using Mirror;
 using System.Collections.Generic;
 using UnityEngine;
@@ -62,28 +63,28 @@ namespace Com.Dot.SZN.Characters
             NetworkServer.Spawn(activeItemPrefab);
             activeItemPrefab.GetComponent<NetworkIdentity>().RemoveClientAuthority();
             activeItemPrefab.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
-            activeItemPrefab.GetComponent<Item>().holder = transform;
-            RpcSetCollision(activeItemPrefab.GetComponent<Item>(), false);
+            activeItemPrefab.GetComponent<BasicItem>().holder = transform;
+            RpcSetCollision(activeItemPrefab.GetComponent<BasicItem>(), false);
             SetItemLayer(activeItemPrefab, true);
-            //item.gameObject.layer = viewModelLayer; // TODO: Change this to a LayerMask
         }
 
         [ClientRpc]
-        void RpcSetCollision(Item item, bool enable)
+        void RpcSetCollision(BasicItem item, bool enable)
         {
             foreach (var collider in item.colliders)
             {
                 collider.enabled = enable;
-                collider.gameObject.layer = viewModelLayer;
             }
         }
 
         [Client]
         void SetItemLayer(GameObject item, bool viewmodel)
         {
-            foreach (var renderer in item.GetComponentsInChildren<Renderer>())
+            item.layer = viewmodel ? viewModelLayer : defaultLayer;
+            for (int i = 0; i < item.transform.childCount; i++)
             {
-                renderer.gameObject.layer = viewmodel ? viewModelLayer : defaultLayer;
+                var child = item.transform.GetChild(i);
+                child.gameObject.layer = viewmodel ? viewModelLayer : defaultLayer;
             }
         }
 
@@ -92,8 +93,8 @@ namespace Com.Dot.SZN.Characters
         {
             if (activeItemPrefab == null) { return; }
 
-            activeItemPrefab.GetComponent<Item>().holder = null;
-            RpcSetCollision(activeItemPrefab.GetComponent<Item>(), true);
+            activeItemPrefab.GetComponent<BasicItem>().holder = null;
+            RpcSetCollision(activeItemPrefab.GetComponent<BasicItem>(), true);
             SetItemLayer(activeItemPrefab, false);
             activeItemPrefab = null;
         }

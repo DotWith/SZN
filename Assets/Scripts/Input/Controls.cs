@@ -66,15 +66,6 @@ namespace Com.Dot.SZN.Input
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Debug"",
-                    ""type"": ""Button"",
-                    ""id"": ""b3840b0a-f09c-4e29-a103-315a57628dd5"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Inventory1"",
                     ""type"": ""Button"",
                     ""id"": ""2feb616c-5158-4a53-8186-6ad0ae2a54ec"",
@@ -105,6 +96,15 @@ namespace Com.Dot.SZN.Input
                     ""name"": ""VoiceChat"",
                     ""type"": ""Button"",
                     ""id"": ""40c43156-7479-4710-9dec-cc8f0bfc7541"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Transform"",
+                    ""type"": ""Button"",
+                    ""id"": ""1b101fcf-a5fc-4ade-a5d7-af3cd2014b4f"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -202,17 +202,6 @@ namespace Com.Dot.SZN.Input
                 },
                 {
                     ""name"": """",
-                    ""id"": ""160af729-44a7-42ca-8272-ff19a4f19d36"",
-                    ""path"": ""<Keyboard>/q"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Debug"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""75b4817e-54b0-4fa2-a73f-3f4a281581eb"",
                     ""path"": ""<Keyboard>/1"",
                     ""interactions"": """",
@@ -254,6 +243,17 @@ namespace Com.Dot.SZN.Input
                     ""action"": ""VoiceChat"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fd79b1bb-31df-4ae2-8e45-4c5026474862"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Transform"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -266,11 +266,11 @@ namespace Com.Dot.SZN.Input
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
             m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
             m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
-            m_Player_Debug = m_Player.FindAction("Debug", throwIfNotFound: true);
             m_Player_Inventory1 = m_Player.FindAction("Inventory1", throwIfNotFound: true);
             m_Player_Inventory2 = m_Player.FindAction("Inventory2", throwIfNotFound: true);
             m_Player_Drop = m_Player.FindAction("Drop", throwIfNotFound: true);
             m_Player_VoiceChat = m_Player.FindAction("VoiceChat", throwIfNotFound: true);
+            m_Player_Transform = m_Player.FindAction("Transform", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -334,11 +334,11 @@ namespace Com.Dot.SZN.Input
         private readonly InputAction m_Player_Jump;
         private readonly InputAction m_Player_Look;
         private readonly InputAction m_Player_Interact;
-        private readonly InputAction m_Player_Debug;
         private readonly InputAction m_Player_Inventory1;
         private readonly InputAction m_Player_Inventory2;
         private readonly InputAction m_Player_Drop;
         private readonly InputAction m_Player_VoiceChat;
+        private readonly InputAction m_Player_Transform;
         public struct PlayerActions
         {
             private @Controls m_Wrapper;
@@ -347,11 +347,11 @@ namespace Com.Dot.SZN.Input
             public InputAction @Jump => m_Wrapper.m_Player_Jump;
             public InputAction @Look => m_Wrapper.m_Player_Look;
             public InputAction @Interact => m_Wrapper.m_Player_Interact;
-            public InputAction @Debug => m_Wrapper.m_Player_Debug;
             public InputAction @Inventory1 => m_Wrapper.m_Player_Inventory1;
             public InputAction @Inventory2 => m_Wrapper.m_Player_Inventory2;
             public InputAction @Drop => m_Wrapper.m_Player_Drop;
             public InputAction @VoiceChat => m_Wrapper.m_Player_VoiceChat;
+            public InputAction @Transform => m_Wrapper.m_Player_Transform;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -373,9 +373,6 @@ namespace Com.Dot.SZN.Input
                     @Interact.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
                     @Interact.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
                     @Interact.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
-                    @Debug.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug;
-                    @Debug.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug;
-                    @Debug.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug;
                     @Inventory1.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInventory1;
                     @Inventory1.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInventory1;
                     @Inventory1.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInventory1;
@@ -388,6 +385,9 @@ namespace Com.Dot.SZN.Input
                     @VoiceChat.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVoiceChat;
                     @VoiceChat.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVoiceChat;
                     @VoiceChat.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVoiceChat;
+                    @Transform.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTransform;
+                    @Transform.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTransform;
+                    @Transform.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTransform;
                 }
                 m_Wrapper.m_PlayerActionsCallbackInterface = instance;
                 if (instance != null)
@@ -404,9 +404,6 @@ namespace Com.Dot.SZN.Input
                     @Interact.started += instance.OnInteract;
                     @Interact.performed += instance.OnInteract;
                     @Interact.canceled += instance.OnInteract;
-                    @Debug.started += instance.OnDebug;
-                    @Debug.performed += instance.OnDebug;
-                    @Debug.canceled += instance.OnDebug;
                     @Inventory1.started += instance.OnInventory1;
                     @Inventory1.performed += instance.OnInventory1;
                     @Inventory1.canceled += instance.OnInventory1;
@@ -419,6 +416,9 @@ namespace Com.Dot.SZN.Input
                     @VoiceChat.started += instance.OnVoiceChat;
                     @VoiceChat.performed += instance.OnVoiceChat;
                     @VoiceChat.canceled += instance.OnVoiceChat;
+                    @Transform.started += instance.OnTransform;
+                    @Transform.performed += instance.OnTransform;
+                    @Transform.canceled += instance.OnTransform;
                 }
             }
         }
@@ -429,11 +429,11 @@ namespace Com.Dot.SZN.Input
             void OnJump(InputAction.CallbackContext context);
             void OnLook(InputAction.CallbackContext context);
             void OnInteract(InputAction.CallbackContext context);
-            void OnDebug(InputAction.CallbackContext context);
             void OnInventory1(InputAction.CallbackContext context);
             void OnInventory2(InputAction.CallbackContext context);
             void OnDrop(InputAction.CallbackContext context);
             void OnVoiceChat(InputAction.CallbackContext context);
+            void OnTransform(InputAction.CallbackContext context);
         }
     }
 }

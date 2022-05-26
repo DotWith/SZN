@@ -6,10 +6,11 @@ namespace Com.Dot.SZN.Characters
 {
     public class Player : NetworkBehaviour
     {
-        public Camera playerCamera = null;
-        public CharacterController controller = null;
+        public PlayerStats stats;
 
         [Space]
+        public Camera playerCamera = null;
+        public CharacterController controller = null;
         public GameObject playerVisuals = null;
 
         Controls controls;
