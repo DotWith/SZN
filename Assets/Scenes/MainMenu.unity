@@ -554,7 +554,7 @@ GameObject:
   - component: {fileID: 164944451}
   - component: {fileID: 164944450}
   m_Layer: 0
-  m_Name: VoiceChatManager
+  m_Name: KcippManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -575,7 +575,7 @@ MonoBehaviour:
   proximity: 0
   maxDistance: 250
   micFrequency: 48000
-  micRecordLenght: 20
+  micRecordLenght: 120
   micSamplePacketSize: 7350
   voiceChatClients: []
 --- !u!4 &164944451

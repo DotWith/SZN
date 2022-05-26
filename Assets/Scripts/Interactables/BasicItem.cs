@@ -21,7 +21,7 @@ namespace Com.Dot.SZN.Interactables
             NetworkServer.Destroy(gameObject);
         }
 
-        public void Update()
+        public void LateUpdate()
         {
             if (holder == null) { return; }
 

@@ -1,6 +1,8 @@
 using Mirror;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Kcipp
@@ -75,8 +77,14 @@ namespace Kcipp
         {
             if (AlwaysTalk) { return; }
 
-            if (KcippManager.singleton.proximity) SendProximityVoice();
-            else SendChanneledVoice();
+            if (KcippManager.singleton.proximity)
+            {
+                SendProximityVoice();
+            }
+            else
+            {
+                SendChanneledVoice();
+            }
         }
 
         void SendChanneledVoice()
@@ -87,7 +95,7 @@ namespace Kcipp
             {
                 float[] samples = new float[diff * micAudioClip.channels];
                 micAudioClip.GetData(samples, lastSample);
-                byte[] ba = ToByteArray(samples);
+                byte[] ba = KcippConverters.Compress(KcippConverters.ToByteArray(samples));
 
                 CmdSendVoice(ba);
 
@@ -102,7 +110,7 @@ namespace Kcipp
             {
                 float[] samples = new float[diff * micAudioClip.channels];
                 micAudioClip.GetData(samples, lastSample);
-                byte[] ba = ToByteArray(samples);
+                byte[] ba = KcippConverters.Compress(KcippConverters.ToByteArray(samples));
 
                 CmdSendProximityVoice(ba);
 
@@ -119,7 +127,7 @@ namespace Kcipp
                 {
                     if (vckp.Key != this && (transform.position - vckp.Key.transform.position).sqrMagnitude < KcippManager.singleton.maxDistance)
                     {
-                        TargetRpcReciveVoice(vckp.Key.connectionToClient, ba);
+                        TargetRpcReciveVoice(ba);
                     }
                 }
                 else
@@ -136,11 +144,11 @@ namespace Kcipp
         }
 
         [TargetRpc]
-        public void TargetRpcReciveVoice(NetworkConnection conn, byte[] ba)
+        public void TargetRpcReciveVoice(byte[] ba)
         {
             if (KcippManager.singleton.proximity)
             {
-                audioSource.volume = VoiceRollOff.Evaluate(-((transform.position - conn.identity.transform.position).magnitude / KcippManager.singleton.maxDistance) + 1);
+                audioSource.volume = VoiceRollOff.Evaluate(-((transform.position - NetworkClient.connection.identity.transform.position).magnitude / KcippManager.singleton.maxDistance) + 1);
             }
             else if (audioSource.volume != 1)
             {
@@ -162,7 +170,7 @@ namespace Kcipp
                 {
                     if (pl.Value == channel && pl.Key != this)
                     {
-                        TargetRpcReciveVoice(pl.Key.connectionToClient, ba);
+                        TargetRpcReciveVoice(ba);
                     }
                 }
                 else
@@ -174,36 +182,11 @@ namespace Kcipp
 
         void ParseVoiceData(byte[] ba)
         {
-            float[] f = ToFloatArray(ba);
+            float[] f = KcippConverters.ToFloatArray(KcippConverters.Decompress(ba));
             AudioClip ac = AudioClip.Create("voice", f.Length, 1, KcippManager.singleton.micFrequency, false);
             ac.SetData(f, 0);
             audioSource.clip = ac;
             if (!audioSource.isPlaying) audioSource.Play();
-        }
-
-        byte[] ToByteArray(float[] floatArray)
-        {
-            int len = floatArray.Length * 4;
-            byte[] byteArray = new byte[len];
-            int pos = 0;
-            foreach (float f in floatArray)
-            {
-                byte[] data = System.BitConverter.GetBytes(f);
-                System.Array.Copy(data, 0, byteArray, pos, 4);
-                pos += 4;
-            }
-            return byteArray;
-        }
-
-        float[] ToFloatArray(byte[] byteArray)
-        {
-            int len = byteArray.Length / 4;
-            float[] floatArray = new float[len];
-            for (int i = 0; i < byteArray.Length; i += 4)
-            {
-                floatArray[i / 4] = System.BitConverter.ToSingle(byteArray, i);
-            }
-            return floatArray;
         }
     }
 }
