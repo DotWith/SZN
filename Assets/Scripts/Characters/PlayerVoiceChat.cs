@@ -1,7 +1,5 @@
 using Kcipp;
 using Mirror;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Com.Dot.SZN.Characters
@@ -10,13 +8,14 @@ namespace Com.Dot.SZN.Characters
     {
         [SerializeField] Player player;
 
-        [SerializeField] KcippPlayer voiceChat;
+        [SerializeField] KcippRecorder recorder;
 
         public override void OnStartAuthority()
         {
             enabled = true;
 
-            player.Controls.Player.VoiceChat.performed += ctx => voiceChat.Talk();
+            //player.Controls.Player.VoiceChat.performed += ctx => recorder.transmitData = true;
+            //player.Controls.Player.VoiceChat.canceled += ctx => recorder.transmitData = false;
         }
     }
 }
