@@ -4,7 +4,7 @@ using System.IO.Compression;
 
 namespace Kcipp
 {
-    public class KcippConverters
+    public static class Utils
     {
         public static byte[] ToByteArray(float[] floatArray)
         {
@@ -29,27 +29,6 @@ namespace Kcipp
                 floatArray[i / 4] = BitConverter.ToSingle(byteArray, i);
             }
             return floatArray;
-        }
-
-        public static byte[] Compress(byte[] uncompressed)
-        {
-            using (var compressedStream = new MemoryStream())
-            using (var zipStream = new GZipStream(compressedStream, CompressionMode.Compress))
-            {
-                zipStream.Write(uncompressed, 0, uncompressed.Length);
-                return compressedStream.ToArray();
-            }
-        }
-
-        public static byte[] Decompress(byte[] compressed)
-        {
-            using (var compressedStream = new MemoryStream(compressed))
-            using (var zipStream = new GZipStream(compressedStream, CompressionMode.Decompress))
-            using (var resultStream = new MemoryStream())
-            {
-                zipStream.CopyTo(resultStream);
-                return resultStream.ToArray();
-            }
         }
     }
 }

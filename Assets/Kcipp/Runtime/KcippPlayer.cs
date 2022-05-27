@@ -95,7 +95,7 @@ namespace Kcipp
             {
                 float[] samples = new float[diff * micAudioClip.channels];
                 micAudioClip.GetData(samples, lastSample);
-                byte[] ba = KcippConverters.Compress(KcippConverters.ToByteArray(samples));
+                byte[] ba = Utils.ToByteArray(samples);
 
                 CmdSendVoice(ba);
 
@@ -110,7 +110,7 @@ namespace Kcipp
             {
                 float[] samples = new float[diff * micAudioClip.channels];
                 micAudioClip.GetData(samples, lastSample);
-                byte[] ba = KcippConverters.Compress(KcippConverters.ToByteArray(samples));
+                byte[] ba = Utils.ToByteArray(samples);
 
                 CmdSendProximityVoice(ba);
 
@@ -127,7 +127,7 @@ namespace Kcipp
                 {
                     if (vckp.Key != this && (transform.position - vckp.Key.transform.position).sqrMagnitude < KcippManager.singleton.maxDistance)
                     {
-                        TargetRpcReciveVoice(ba);
+                        TargetRpcReciveVoice(vckp.Key.connectionToClient, ba);
                     }
                 }
                 else
@@ -144,11 +144,11 @@ namespace Kcipp
         }
 
         [TargetRpc]
-        public void TargetRpcReciveVoice(byte[] ba)
+        public void TargetRpcReciveVoice(NetworkConnection conn, byte[] ba)
         {
             if (KcippManager.singleton.proximity)
             {
-                audioSource.volume = VoiceRollOff.Evaluate(-((transform.position - NetworkClient.connection.identity.transform.position).magnitude / KcippManager.singleton.maxDistance) + 1);
+                audioSource.volume = VoiceRollOff.Evaluate(-((transform.position - conn.identity.transform.position).magnitude / KcippManager.singleton.maxDistance) + 1);
             }
             else if (audioSource.volume != 1)
             {
@@ -170,7 +170,7 @@ namespace Kcipp
                 {
                     if (pl.Value == channel && pl.Key != this)
                     {
-                        TargetRpcReciveVoice(ba);
+                        TargetRpcReciveVoice(pl.Key.connectionToClient, ba);
                     }
                 }
                 else
@@ -182,7 +182,7 @@ namespace Kcipp
 
         void ParseVoiceData(byte[] ba)
         {
-            float[] f = KcippConverters.ToFloatArray(KcippConverters.Decompress(ba));
+            float[] f = Utils.ToFloatArray(ba);
             AudioClip ac = AudioClip.Create("voice", f.Length, 1, KcippManager.singleton.micFrequency, false);
             ac.SetData(f, 0);
             audioSource.clip = ac;
