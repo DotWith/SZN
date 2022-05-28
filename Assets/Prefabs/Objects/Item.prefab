@@ -49,9 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  itemPrefab: {fileID: 0}
-  colliders:
-  - {fileID: 2691624282890242578}
+  itemInfo: {fileID: 11400000, guid: b1d133e698f2c224e934babf1ffe79b4, type: 2}
   holder: {fileID: 0}
 --- !u!65 &2691624282890242578
 BoxCollider:

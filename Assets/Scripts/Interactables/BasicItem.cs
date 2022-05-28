@@ -1,5 +1,6 @@
 using Com.Dot.SZN.Characters;
 using Com.Dot.SZN.Interfaces;
+using Com.Dot.SZN.ScriptableObjects;
 using Mirror;
 using UnityEngine;
 
@@ -7,9 +8,9 @@ namespace Com.Dot.SZN.Interactables
 {
     public class BasicItem : NetworkBehaviour, IInteractable
     {
-        public Collider[] colliders;
+        public SimpleItem itemInfo;
 
-        [SyncVar]
+        [SyncVar, HideInInspector]
         public Transform holder;
 
         public void Interact() => CmdInteract();

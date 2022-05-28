@@ -8,10 +8,11 @@ namespace Com.Dot.SZN.UI.TabSystem
 {
     public class TabButton : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler, IPointerDownHandler
     {
-        public TabGroup tabGroup;
+        TabGroup tabGroup;
 
         public void Start()
         {
+            tabGroup = transform.GetComponentInParent<TabGroup>();
             tabGroup.Subscribe(this);
         }
 

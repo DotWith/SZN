@@ -21,7 +21,7 @@ namespace Com.Dot.SZN.Characters
         {
             if (player.stats.playerRole != PlayerRole.Traitor) { return; }
 
-            Debug.Log("Fart");
+            player.stats.isTransformed = !player.stats.isTransformed;
         }
     }
 }

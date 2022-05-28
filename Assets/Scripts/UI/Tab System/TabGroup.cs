@@ -34,7 +34,7 @@ namespace Com.Dot.SZN.UI.TabSystem
         {
             selectedTab = button;
 
-            int index = button.transform.GetSiblingIndex() - 1;
+            int index = button.transform.GetSiblingIndex();
             for (int i = 0; i < objectsToSwap.Count; i++)
             {
                 objectsToSwap[i].SetActive(i == index);

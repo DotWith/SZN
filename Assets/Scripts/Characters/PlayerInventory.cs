@@ -71,7 +71,8 @@ namespace Com.Dot.SZN.Characters
         [ClientRpc]
         void RpcSetCollision(BasicItem item, bool enable)
         {
-            foreach (var collider in item.colliders)
+            item.GetComponent<Collider>().enabled = enable;
+            foreach (var collider in item.GetComponentsInChildren<Collider>())
             {
                 collider.enabled = enable;
             }
