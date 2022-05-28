@@ -33,6 +33,8 @@ namespace Com.Dot.SZN.Characters
 
             if (selectedInteractable == null) { return; }
 
+            if (selectedInteractable.GetComponent<IInteractable>() == null) { return; }
+
             selectedInteractable.GetComponent<IInteractable>().Interact();
         }
 

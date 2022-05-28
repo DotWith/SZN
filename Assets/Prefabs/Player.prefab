@@ -697,6 +697,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   stats: {fileID: 6960697004282280437}
+  move: {fileID: 7122856392962852889}
   playerCamera: {fileID: 5969156788483006356}
   controller: {fileID: 4833049244001968414}
   playerVisuals: {fileID: 7852956717777688232}
@@ -774,8 +775,6 @@ MonoBehaviour:
   player: {fileID: 8304273610227629815}
   itemPrefab: {fileID: 3486250070028003002, guid: 44a230f5c807a48408ce6bebe0a5f30e, type: 3}
   itemHolder: {fileID: 6468328595946429928}
-  viewModelLayer: 9
-  defaultLayer: 8
   itemArray: []
 --- !u!114 &3446696878859044213
 MonoBehaviour:
@@ -823,6 +822,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   playerRole: 2
+  isTransformed: 0
   roleVisuals:
   - role: 0
     visuals: {fileID: 1570665406428901635}

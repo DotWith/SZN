@@ -7,6 +7,7 @@ namespace Com.Dot.SZN.Characters
     public class Player : NetworkBehaviour
     {
         public PlayerStats stats;
+        public PlayerMove move;
 
         [Space]
         public Camera playerCamera = null;

@@ -84,6 +84,15 @@ namespace Com.Dot.SZN.Input
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Use"",
+                    ""type"": ""Button"",
+                    ""id"": ""0da9c045-361e-4526-a869-dcf29c65be0b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Drop"",
                     ""type"": ""Button"",
                     ""id"": ""be6585c2-4ae1-47f6-9d20-9eb598fb575d"",
@@ -254,6 +263,17 @@ namespace Com.Dot.SZN.Input
                     ""action"": ""Transform"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ea3df9f6-accf-4a2e-a675-bd08b94a38c2"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Use"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -268,6 +288,7 @@ namespace Com.Dot.SZN.Input
             m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
             m_Player_Inventory1 = m_Player.FindAction("Inventory1", throwIfNotFound: true);
             m_Player_Inventory2 = m_Player.FindAction("Inventory2", throwIfNotFound: true);
+            m_Player_Use = m_Player.FindAction("Use", throwIfNotFound: true);
             m_Player_Drop = m_Player.FindAction("Drop", throwIfNotFound: true);
             m_Player_VoiceChat = m_Player.FindAction("VoiceChat", throwIfNotFound: true);
             m_Player_Transform = m_Player.FindAction("Transform", throwIfNotFound: true);
@@ -336,6 +357,7 @@ namespace Com.Dot.SZN.Input
         private readonly InputAction m_Player_Interact;
         private readonly InputAction m_Player_Inventory1;
         private readonly InputAction m_Player_Inventory2;
+        private readonly InputAction m_Player_Use;
         private readonly InputAction m_Player_Drop;
         private readonly InputAction m_Player_VoiceChat;
         private readonly InputAction m_Player_Transform;
@@ -349,6 +371,7 @@ namespace Com.Dot.SZN.Input
             public InputAction @Interact => m_Wrapper.m_Player_Interact;
             public InputAction @Inventory1 => m_Wrapper.m_Player_Inventory1;
             public InputAction @Inventory2 => m_Wrapper.m_Player_Inventory2;
+            public InputAction @Use => m_Wrapper.m_Player_Use;
             public InputAction @Drop => m_Wrapper.m_Player_Drop;
             public InputAction @VoiceChat => m_Wrapper.m_Player_VoiceChat;
             public InputAction @Transform => m_Wrapper.m_Player_Transform;
@@ -379,6 +402,9 @@ namespace Com.Dot.SZN.Input
                     @Inventory2.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInventory2;
                     @Inventory2.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInventory2;
                     @Inventory2.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInventory2;
+                    @Use.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUse;
+                    @Use.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUse;
+                    @Use.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUse;
                     @Drop.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrop;
                     @Drop.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrop;
                     @Drop.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDrop;
@@ -410,6 +436,9 @@ namespace Com.Dot.SZN.Input
                     @Inventory2.started += instance.OnInventory2;
                     @Inventory2.performed += instance.OnInventory2;
                     @Inventory2.canceled += instance.OnInventory2;
+                    @Use.started += instance.OnUse;
+                    @Use.performed += instance.OnUse;
+                    @Use.canceled += instance.OnUse;
                     @Drop.started += instance.OnDrop;
                     @Drop.performed += instance.OnDrop;
                     @Drop.canceled += instance.OnDrop;
@@ -431,6 +460,7 @@ namespace Com.Dot.SZN.Input
             void OnInteract(InputAction.CallbackContext context);
             void OnInventory1(InputAction.CallbackContext context);
             void OnInventory2(InputAction.CallbackContext context);
+            void OnUse(InputAction.CallbackContext context);
             void OnDrop(InputAction.CallbackContext context);
             void OnVoiceChat(InputAction.CallbackContext context);
             void OnTransform(InputAction.CallbackContext context);

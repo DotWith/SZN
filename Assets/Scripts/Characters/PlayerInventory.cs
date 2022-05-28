@@ -1,4 +1,5 @@
 using Com.Dot.SZN.Interactables;
+using Com.Dot.SZN.ScriptableObjects;
 using Mirror;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,8 +13,6 @@ namespace Com.Dot.SZN.Characters
         [Space]
         [SerializeField] GameObject itemPrefab;
         [SerializeField] Transform itemHolder;
-        [SerializeField] int viewModelLayer;
-        [SerializeField] int defaultLayer;
 
         /// <summary>
         /// The max items for this inventory
@@ -23,9 +22,9 @@ namespace Com.Dot.SZN.Characters
         /// <summary>
         /// The items the inventory contains
         /// </summary>
-        public List<GameObject> itemArray = new List<GameObject>();
+        public List<SimpleItem> itemArray = new List<SimpleItem>();
 
-        GameObject activeItemPrefab;
+        BasicItem activeItemPrefab;
 
         public override void OnStartAuthority()
         {
@@ -34,14 +33,15 @@ namespace Com.Dot.SZN.Characters
             player.Controls.Player.Inventory1.performed += ctx => CmdChangeActiveItem(0);
             player.Controls.Player.Inventory2.performed += ctx => CmdChangeActiveItem(1);
 
+            player.Controls.Player.Use.performed += ctx => CmdUseActiveItem();
             player.Controls.Player.Drop.performed += ctx => CmdDropActiveItem();
         }
 
-        public void AddItem()
+        public void AddItem(SimpleItem info)
         {
             if (itemArray.Count >= MaxItems) { return; }
 
-            itemArray.Add(itemPrefab);
+            itemArray.Add(info);
         }
 
         [Command]
@@ -50,53 +50,48 @@ namespace Com.Dot.SZN.Characters
             if (activeItemPrefab != null)
             {
                 Destroy(activeItemPrefab);
-                NetworkServer.UnSpawn(activeItemPrefab);
+                NetworkServer.UnSpawn(activeItemPrefab.gameObject);
             }
 
             if (itemArray.Count <= newIndex) { return; }
 
-            GameObject item = itemArray[newIndex];
+            SimpleItem info = itemArray[newIndex];
 
-            if (item == null) { return; }
+            if (info == null) { return; }
 
-            activeItemPrefab = Instantiate(item);
-            NetworkServer.Spawn(activeItemPrefab);
-            activeItemPrefab.GetComponent<NetworkIdentity>().RemoveClientAuthority();
-            activeItemPrefab.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
-            activeItemPrefab.GetComponent<BasicItem>().holder = transform;
-            RpcSetCollision(activeItemPrefab.GetComponent<BasicItem>(), false);
-            SetItemLayer(activeItemPrefab, true);
+            activeItemPrefab = Instantiate(itemPrefab).GetComponent<BasicItem>();
+            NetworkServer.Spawn(activeItemPrefab.gameObject);
+            activeItemPrefab.netIdentity.RemoveClientAuthority();
+            activeItemPrefab.netIdentity.AssignClientAuthority(connectionToClient);
+            activeItemPrefab.holder = transform;
+            activeItemPrefab.itemInfo = info;
+            RpcSetCollision(activeItemPrefab, false);
         }
 
         [ClientRpc]
         void RpcSetCollision(BasicItem item, bool enable)
         {
-            item.GetComponent<Collider>().enabled = enable;
             foreach (var collider in item.GetComponentsInChildren<Collider>())
             {
                 collider.enabled = enable;
             }
         }
 
-        [Client]
-        void SetItemLayer(GameObject item, bool viewmodel)
-        {
-            item.layer = viewmodel ? viewModelLayer : defaultLayer;
-            for (int i = 0; i < item.transform.childCount; i++)
-            {
-                var child = item.transform.GetChild(i);
-                child.gameObject.layer = viewmodel ? viewModelLayer : defaultLayer;
-            }
-        }
-
         [Command]
-        public void CmdDropActiveItem()
+        void CmdUseActiveItem()
         {
             if (activeItemPrefab == null) { return; }
 
-            activeItemPrefab.GetComponent<BasicItem>().holder = null;
-            RpcSetCollision(activeItemPrefab.GetComponent<BasicItem>(), true);
-            SetItemLayer(activeItemPrefab, false);
+            activeItemPrefab.itemInfo.Use(player);
+        }
+
+        [Command]
+        void CmdDropActiveItem()
+        {
+            if (activeItemPrefab == null) { return; }
+
+            activeItemPrefab.holder = null;
+            RpcSetCollision(activeItemPrefab, true);
             activeItemPrefab = null;
         }
     }

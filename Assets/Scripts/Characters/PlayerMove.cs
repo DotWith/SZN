@@ -16,7 +16,7 @@ namespace Com.Dot.SZN.Characters
         bool isJumping = false;
         float velocityY = 0.0f;
         Vector2 previousInput;
-        
+
         public override void OnStartAuthority()
         {
             enabled = true;
@@ -71,6 +71,12 @@ namespace Com.Dot.SZN.Characters
             } while (!player.controller.isGrounded && player.controller.collisionFlags != CollisionFlags.Above);
 
             isJumping = false;
+        }
+
+        public void SetMovementSpeedForTime(float speed, float time)
+        {
+            Debug.Log("How did we get here");
+            movementSpeed *= speed;
         }
     }
 }
