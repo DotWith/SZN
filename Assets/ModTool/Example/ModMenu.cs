@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.Linq;
 using ModTool;
 using TMPro;
+using Com.Dot.SZN.UI;
 
 /// <summary>
 /// Example mod manager. This menu displays all mods and lets you enable/disable them.
@@ -28,7 +29,7 @@ public class ModMenu : MonoBehaviour
     /// <summary>
     /// Button that will start loading enabled mods
     /// </summary>
-    public Button loadButton;
+    public SZNButton loadButton;
 
     /// <summary>
     /// Are the enabled mods loaded?
