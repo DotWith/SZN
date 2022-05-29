@@ -20,7 +20,7 @@ namespace Com.Dot.SZN.Characters
         /// </summary>
         public List<SimpleItem> itemArray = new List<SimpleItem>();
 
-        BasicItem activeItemPrefab;
+        GameObject activeItemPrefab;
 
         public override void OnStartAuthority()
         {
@@ -40,13 +40,18 @@ namespace Com.Dot.SZN.Characters
             itemArray.Add(info);
         }
 
+        public void RemoveItem(SimpleItem info)
+        {
+            itemArray.Remove(info);
+        }
+
         [Command]
         void CmdChangeActiveItem(int newIndex)
         {
             if (activeItemPrefab != null)
             {
-                Destroy(activeItemPrefab.gameObject);
-                NetworkServer.UnSpawn(activeItemPrefab.gameObject);
+                Destroy(activeItemPrefab);
+                NetworkServer.UnSpawn(activeItemPrefab);
             }
 
             if (itemArray.Count <= newIndex) { return; }
@@ -55,22 +60,25 @@ namespace Com.Dot.SZN.Characters
 
             if (info == null) { return; }
 
-            activeItemPrefab = Instantiate(info.itemPrefab).GetComponent<BasicItem>();
-            NetworkServer.Spawn(activeItemPrefab.gameObject);
-            activeItemPrefab.netIdentity.RemoveClientAuthority();
-            activeItemPrefab.netIdentity.AssignClientAuthority(connectionToClient);
-            activeItemPrefab.holder = transform;
-            activeItemPrefab.itemInfo = info;
+            activeItemPrefab = Instantiate(info.itemPrefab.gameObject);
+            NetworkServer.Spawn(activeItemPrefab);
+            activeItemPrefab.GetComponent<BasicItem>().netIdentity.RemoveClientAuthority();
+            activeItemPrefab.GetComponent<BasicItem>().netIdentity.AssignClientAuthority(connectionToClient);
+            activeItemPrefab.GetComponent<BasicItem>().holder = transform;
+            activeItemPrefab.GetComponent<BasicItem>().itemInfo = info;
             RpcSetCollision(activeItemPrefab, false);
         }
 
         [ClientRpc]
-        void RpcSetCollision(BasicItem item, bool enable)
+        void RpcSetCollision(GameObject item, bool enable)
         {
-            foreach (var collider in item.GetComponentsInChildren<Collider>())
+            if (item.GetComponent<Collider>() == null) { return; }
+
+            item.GetComponent<Collider>().enabled = enable;
+            /*foreach (var collider in item.GetComponentsInChildren<Collider>())
             {
                 collider.enabled = enable;
-            }
+            }*/
         }
 
         [Command]
@@ -78,7 +86,7 @@ namespace Com.Dot.SZN.Characters
         {
             if (activeItemPrefab == null) { return; }
 
-            activeItemPrefab.Use();
+            activeItemPrefab.GetComponent<BasicItem>().Use();
         }
 
         [Command]
@@ -86,9 +94,11 @@ namespace Com.Dot.SZN.Characters
         {
             if (activeItemPrefab == null) { return; }
 
-            activeItemPrefab.holder = null;
+            activeItemPrefab.GetComponent<BasicItem>().holder = null;
             RpcSetCollision(activeItemPrefab, true);
             activeItemPrefab = null;
+
+            RemoveItem(activeItemPrefab.GetComponent<BasicItem>().itemInfo);
         }
     }
 }

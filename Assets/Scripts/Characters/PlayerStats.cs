@@ -12,44 +12,30 @@ namespace Com.Dot.SZN.Characters
         Spectator
     }
 
-    [System.Serializable]
-    public class RoleVisuals
-    {
-        public PlayerRole role;
-        public GameObject visuals;
-    }
-
     public class PlayerStats : NetworkBehaviour
     {
-        [SyncVar]
+        [SyncVar(hook = nameof(SetPlayerRole))]
         public PlayerRole playerRole = PlayerRole.Spectator;
 
-        [SyncVar]
+        [SyncVar(hook = nameof(SetTransformed))]
         public bool isTransformed = false;
 
-        public RoleVisuals[] roleVisuals;
+        public GameObject innocentVisuals;
+        public GameObject traitorVisuals;
+
+        void SetPlayerRole(PlayerRole oldRole, PlayerRole newRole)
+        {
+        }
+
+        void SetTransformed(bool oldTrans, bool newTrans)
+        {
+            innocentVisuals.SetActive(!newTrans);
+            traitorVisuals.SetActive(newTrans);
+        }
 
         public override void OnStartServer()
         {
             ServerSelectRandomRoleForAll(1);
-        }
-
-        public void Update()
-        {
-            for (int i = 0; i < roleVisuals.Length; i++)
-            {
-                var roleVisual = roleVisuals[i];
-                switch (roleVisual.role)
-                {
-                    case PlayerRole.Traitor:
-                        roleVisual.visuals.SetActive(roleVisual.role == PlayerRole.Traitor && isTransformed);
-                        break;
-                    default:
-                        roleVisual.visuals.SetActive(roleVisual.role == playerRole);
-                        break;
-                }
-                //roleVisual.visuals.SetActive(roleVisual.role == playerRole);
-            }
         }
 
         [Server]
@@ -57,15 +43,19 @@ namespace Com.Dot.SZN.Characters
         {
             foreach (PlayerStats ps in FindObjectsOfType<PlayerStats>())
             {
-                int role = Random.Range(0, 2);
+                PlayerRole role = PlayerRole.Spectator;
 
                 if (traitorsCount == 0)
-                    role = 0;
-
-                if ((PlayerRole)role == PlayerRole.Traitor)
+                {
+                    role = PlayerRole.Innocent;
+                }
+                else
+                {
+                    role = PlayerRole.Traitor;
                     traitorsCount--;
+                }
 
-                ps.playerRole = (PlayerRole)role;
+                ps.playerRole = role;
             }
         }
     }
