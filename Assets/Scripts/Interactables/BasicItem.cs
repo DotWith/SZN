@@ -8,24 +8,14 @@ namespace Com.Dot.SZN.Interactables
 {
     public class BasicItem : NetworkBehaviour, IInteractable
     {
-        //[SyncVar]
         public SimpleItem itemInfo;
 
         [SyncVar, HideInInspector]
         public Transform holder;
 
-        public override void OnStartAuthority()
-        {
-            Instantiate(itemInfo.viewModel.model, transform);
-        }
-
-        public void Start()
-        {
-            if (hasAuthority) { return; }
-
-            Instantiate(itemInfo.worldModel.model, transform);
-        }
-
+        public GameObject worldModel;
+        public GameObject viewModel;
+        
         public void Interact() => CmdInteract();
 
         [Command(requiresAuthority = false)]
@@ -33,6 +23,11 @@ namespace Com.Dot.SZN.Interactables
         {
             sender.identity.GetComponent<PlayerInventory>().AddItem(itemInfo);
             NetworkServer.Destroy(gameObject);
+        }
+
+        public void Use()
+        {
+            itemInfo.Use(connectionToClient.identity.GetComponent<Player>());
         }
 
         public void LateUpdate()

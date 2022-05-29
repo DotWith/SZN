@@ -1,4 +1,5 @@
 using Com.Dot.SZN.Characters;
+using Com.Dot.SZN.Interactables;
 using UnityEngine;
 
 namespace Com.Dot.SZN.ScriptableObjects
@@ -6,6 +7,9 @@ namespace Com.Dot.SZN.ScriptableObjects
     [CreateAssetMenu(fileName = "New Simple Item", menuName = "Item/Simple Item")]
     public class SimpleItem : ScriptableObject
     {
+        public BasicItem itemPrefab;
+
+        [Header("Properties")]
         public new string name;
 
         [Multiline]
@@ -13,10 +17,6 @@ namespace Com.Dot.SZN.ScriptableObjects
 
         [Header("Icon")]
         public Sprite icon;
-
-        [Header("Model")]
-        public ModelInfo worldModel = new ModelInfo();
-        public ModelInfo viewModel = new ModelInfo();
 
         public virtual void Use(Player client) { }
     }

@@ -13,7 +13,7 @@ namespace Com.Dot.SZN.ScriptableObjects
 
         public override void Use(Player client)
         {
-            client.move.SetMovementSpeedForTime(speed, time);
+            client.move.SetMovementSpeed(speed, time);
         }
     }
 }

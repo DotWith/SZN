@@ -10,10 +10,6 @@ namespace Com.Dot.SZN.Characters
     {
         [SerializeField] Player player;
 
-        [Space]
-        [SerializeField] GameObject itemPrefab;
-        [SerializeField] Transform itemHolder;
-
         /// <summary>
         /// The max items for this inventory
         /// </summary>
@@ -49,7 +45,7 @@ namespace Com.Dot.SZN.Characters
         {
             if (activeItemPrefab != null)
             {
-                Destroy(activeItemPrefab);
+                Destroy(activeItemPrefab.gameObject);
                 NetworkServer.UnSpawn(activeItemPrefab.gameObject);
             }
 
@@ -59,7 +55,7 @@ namespace Com.Dot.SZN.Characters
 
             if (info == null) { return; }
 
-            activeItemPrefab = Instantiate(itemPrefab).GetComponent<BasicItem>();
+            activeItemPrefab = Instantiate(info.itemPrefab).GetComponent<BasicItem>();
             NetworkServer.Spawn(activeItemPrefab.gameObject);
             activeItemPrefab.netIdentity.RemoveClientAuthority();
             activeItemPrefab.netIdentity.AssignClientAuthority(connectionToClient);
@@ -82,7 +78,7 @@ namespace Com.Dot.SZN.Characters
         {
             if (activeItemPrefab == null) { return; }
 
-            activeItemPrefab.itemInfo.Use(player);
+            activeItemPrefab.Use();
         }
 
         [Command]

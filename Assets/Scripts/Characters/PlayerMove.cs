@@ -73,10 +73,16 @@ namespace Com.Dot.SZN.Characters
             isJumping = false;
         }
 
-        public void SetMovementSpeedForTime(float speed, float time)
+        public void SetMovementSpeed(float speed, float time)
         {
-            Debug.Log("How did we get here");
+            StartCoroutine(SetMovementSpeedForTime(speed, time));
+        }
+
+        IEnumerator SetMovementSpeedForTime(float speed, float time)
+        {
             movementSpeed *= speed;
+            yield return new WaitForSeconds(time);
+            movementSpeed /= speed;
         }
     }
 }
