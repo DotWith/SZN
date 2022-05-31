@@ -1,4 +1,3 @@
-using Com.Dot.SZN.Characters;
 using System;
 using UnityEngine;
 
@@ -19,7 +18,7 @@ namespace Com.Dot.SZN.ScriptableObjects
             id = Guid.NewGuid().ToString();
         }
 
-        #region Item Callbacks
+        #region Item Virtuals
         public virtual void Pickup() { }
         public virtual void Drop() { }
         public virtual void Use() { }

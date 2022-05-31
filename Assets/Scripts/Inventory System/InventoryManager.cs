@@ -6,6 +6,7 @@ using UnityEngine.Serialization;
 
 namespace Com.Dot.SZN.InventorySystem
 {
+    [DisallowMultipleComponent]
     public class InventoryManager : MonoBehaviour
     {
         [Header("Inventory Settings")]
@@ -25,8 +26,10 @@ namespace Com.Dot.SZN.InventorySystem
         {
             singleton = this;
             DontDestroyOnLoad(gameObject);
+        }
 
-            // Setup Client
+        public void SetupClient()
+        {
             NetworkClient.RegisterHandler<Item>(OnItem);
             NetworkClient.RegisterHandler<RemoveItem>(OnRemoveItem);
             NetworkClient.RegisterHandler<ChangeItem>(OnChangeItem);
@@ -62,7 +65,7 @@ namespace Com.Dot.SZN.InventorySystem
         [ClientCallback]
         public void UseItem()
         {
-            var msg = new ChangeItem(activeItem);
+            var msg = new UseItem(activeItem);
             NetworkServer.SendToAll(msg);
         }
         #endregion // Client Callbacks
@@ -98,10 +101,15 @@ namespace Com.Dot.SZN.InventorySystem
         void OnUseItem(UseItem msg)
         {
             // Checks if we are selecting that item
-            if (activeItem.Equals(msg.activeItem))
+            if (!activeItem.Equals(msg.activeItem))
                 return;
 
             SimpleItem item = Resources.LoadAll<SimpleItem>("Items").ToList().Find(i => i.id == items.GetValue(activeItem));
+
+            if (item == null)
+                return;
+
+            Debug.Log($"ItemUse: {item.name}");
             item.Use();
         }
         #endregion // Registered Handles

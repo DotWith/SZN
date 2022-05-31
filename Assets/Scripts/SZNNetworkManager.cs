@@ -12,5 +12,11 @@ namespace Com.Dot.SZN
 
             spawnPrefabs = Resources.LoadAll<GameObject>("SpawnablePrefabs").ToList();
         }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            InventorySystem.InventoryManager.singleton.SetupClient();
+        }
     }
 }
