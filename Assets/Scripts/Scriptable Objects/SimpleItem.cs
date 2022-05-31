@@ -1,5 +1,5 @@
 using Com.Dot.SZN.Characters;
-using Com.Dot.SZN.Interactables;
+using System;
 using UnityEngine;
 
 namespace Com.Dot.SZN.ScriptableObjects
@@ -7,17 +7,22 @@ namespace Com.Dot.SZN.ScriptableObjects
     [CreateAssetMenu(fileName = "New Simple Item", menuName = "Item/Simple Item")]
     public class SimpleItem : ScriptableObject
     {
-        public BasicItem itemPrefab;
+        [HideInInspector]
+        public string id;
 
-        [Header("Properties")]
-        public new string name;
+        public GameObject prefab;
 
-        [Multiline]
-        public string description;
-
-        [Header("Icon")]
         public Sprite icon;
 
-        public virtual void Use(Player client) { }
+        public void Reset()
+        {
+            id = Guid.NewGuid().ToString();
+        }
+
+        #region Item Callbacks
+        public virtual void Pickup() { }
+        public virtual void Drop() { }
+        public virtual void Use() { }
+        #endregion
     }
 }

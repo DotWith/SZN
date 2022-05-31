@@ -2,6 +2,7 @@ using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Com.Dot.SZN.Characters
 {
@@ -9,11 +10,13 @@ namespace Com.Dot.SZN.Characters
     {
         [SerializeField] Player player;
 
-        public override void OnStartAuthority()
+        public void Transform(InputAction.CallbackContext ctx)
         {
-            enabled = true;
+            if (!isLocalPlayer) { return; }
 
-            player.Controls.Player.Transform.performed += ctx => CmdTransform();
+            if (!ctx.performed) { return; }
+
+            CmdTransform();
         }
 
         [Command]

@@ -1,6 +1,7 @@
 using UnityEngine;
 using Mirror;
 using System.Collections;
+using UnityEngine.InputSystem;
 
 namespace Com.Dot.SZN.Characters
 {
@@ -15,29 +16,16 @@ namespace Com.Dot.SZN.Characters
 
         bool isJumping = false;
         float velocityY = 0.0f;
-        Vector2 previousInput;
-
-        public override void OnStartAuthority()
-        {
-            enabled = true;
-
-            player.Controls.Player.Move.performed += ctx => SetMovement(ctx.ReadValue<Vector2>());
-            player.Controls.Player.Move.canceled += ctx => ResetMovement();
-            player.Controls.Player.Jump.performed += ctx => Jump();
-        }
+        Vector2 inputMovement;
 
         [ClientCallback]
         public void Update() => Move();
 
         [Client]
-        void SetMovement(Vector2 movement) => previousInput = movement;
-
-        [Client]
-        void ResetMovement() => previousInput = Vector2.zero;
-
-        [Client]
         void Move()
         {
+            if (!isLocalPlayer) { return; }
+
             Vector3 right = player.controller.transform.right;
             Vector3 forward = player.controller.transform.forward;
             right.y = 0;
@@ -48,14 +36,20 @@ namespace Com.Dot.SZN.Characters
 
             velocityY += gravity * Time.deltaTime;
 
-            Vector3 movement = (right.normalized * previousInput.x + forward.normalized * previousInput.y) * movementSpeed + Vector3.up * velocityY;
+            Vector3 movement = (right.normalized * inputMovement.x + forward.normalized * inputMovement.y) * movementSpeed + Vector3.up * velocityY;
 
             player.controller.Move(movement * Time.deltaTime);
         }
 
+        public void SetMovement(InputAction.CallbackContext ctx) => inputMovement = ctx.ReadValue<Vector2>();
+
         [Client]
-        void Jump()
+        public void Jump(InputAction.CallbackContext ctx)
         {
+            if (!isLocalPlayer) { return; }
+
+            if (!ctx.performed) { return; }
+
             if (isJumping) { return; }
 
             isJumping = true;

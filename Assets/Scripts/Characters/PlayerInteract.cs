@@ -3,6 +3,7 @@ using Mirror;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Com.Dot.SZN.Characters
 {
@@ -19,23 +20,30 @@ namespace Com.Dot.SZN.Characters
         List<IInteractable> nearInteractables = new List<IInteractable>();
         GameObject selectedInteractable = null;
 
-        public override void OnStartAuthority()
+        public void Interact(InputAction.CallbackContext ctx)
         {
-            enabled = true;
+            if (!isLocalPlayer) { return; }
 
-            player.Controls.Player.Interact.performed += ctx => Interact();
-            player.Controls.Player.Interact.canceled += ctx => CancelInteract();
+            if (ctx.performed)
+            {
+                PerformInteract();
+            }
+            else
+            {
+                CancelInteract();
+            }
         }
 
-        void Interact()
+        void PerformInteract()
         {
             SearchInteractables();
 
             if (selectedInteractable == null) { return; }
 
-            if (selectedInteractable.GetComponent<IInteractable>() == null) { return; }
+            IInteractable target = selectedInteractable.GetComponent<IInteractable>();
+            if (target == null) { return; }
 
-            selectedInteractable.GetComponent<IInteractable>().Interact();
+            target.Interact();
         }
 
         void CancelInteract()

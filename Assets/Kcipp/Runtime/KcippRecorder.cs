@@ -27,6 +27,8 @@ namespace Kcipp
         {
             if (!isLocalPlayer) { return; }
 
+            if (!NetworkClient.ready) { return; }
+
             int currentMicSamplePosition = Microphone.GetPosition(null);
             int samplesToTransmit = GetSampleTransmissionCount(currentMicSamplePosition);
 

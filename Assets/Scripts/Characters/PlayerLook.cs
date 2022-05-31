@@ -1,5 +1,6 @@
 using Mirror;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Com.Dot.SZN.Characters
 {
@@ -12,19 +13,27 @@ namespace Com.Dot.SZN.Characters
 
         float cameraPitch = 0.0f;
 
-        public override void OnStartAuthority()
+        public override void OnStartLocalPlayer()
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-
-            enabled = true;
-
-            player.Controls.Player.Look.performed += ctx => Look(ctx.ReadValue<Vector2>());
         }
 
-        void Look(Vector2 lookAxis)
+        public override void OnStopLocalPlayer()
         {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+
+        public void Look(InputAction.CallbackContext ctx)
+        {
+            if (!isLocalPlayer) { return; }
+
             if (player.playerCamera == null) { return; }
+
+            Vector2 lookAxis = ctx.ReadValue<Vector2>();
+
+            if (!ctx.performed) { return; }
 
             cameraPitch -= lookAxis.y * mouseSensitivity;
 

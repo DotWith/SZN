@@ -1,4 +1,5 @@
 using Com.Dot.SZN.Characters;
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,9 +12,9 @@ namespace Com.Dot.SZN.ScriptableObjects
         public float speed = 2;
         public float time = 5;
 
-        public override void Use(Player client)
+        public override void Use()
         {
-            client.move.SetMovementSpeed(speed, time);
+            NetworkClient.localPlayer.GetComponent<Player>().move.SetMovementSpeed(speed, time);
         }
     }
 }

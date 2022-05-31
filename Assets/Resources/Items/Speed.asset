@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ea71e0987e6f0849bc3d580065a10c8, type: 3}
   m_Name: Speed
   m_EditorClassIdentifier: 
-  itemPrefab: {fileID: 8842113724963365830, guid: 9febf7485b99e0f4696e5e715af9ebbb, type: 3}
-  name: Speed
-  description: Run that fast?
-  icon: {fileID: 21300000, guid: 7adc74c395b875d45b1778ac2711339e, type: 3}
+  id: 2073d52b-5d37-42f8-97f4-c386dc19a811
+  prefab: {fileID: 2268063827810515781, guid: 9febf7485b99e0f4696e5e715af9ebbb, type: 3}
+  icon: {fileID: 0}
   speed: 2
   time: 5

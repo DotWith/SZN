@@ -1,8 +1,8 @@
-using Com.Dot.SZN.Interactables;
+using Com.Dot.SZN.InventorySystem;
 using Com.Dot.SZN.ScriptableObjects;
 using Mirror;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Com.Dot.SZN.Characters
 {
@@ -10,95 +10,31 @@ namespace Com.Dot.SZN.Characters
     {
         [SerializeField] Player player;
 
-        /// <summary>
-        /// The max items for this inventory
-        /// </summary>
-        const int MaxItems = 2;
-
-        /// <summary>
-        /// The items the inventory contains
-        /// </summary>
-        public List<SimpleItem> itemArray = new List<SimpleItem>();
-
-        GameObject activeItemPrefab;
-
-        public override void OnStartAuthority()
+        public void ChangeItemToFirst(InputAction.CallbackContext ctx)
         {
-            enabled = true;
+            if (!isLocalPlayer) { return; }
 
-            player.Controls.Player.Inventory1.performed += ctx => CmdChangeActiveItem(0);
-            player.Controls.Player.Inventory2.performed += ctx => CmdChangeActiveItem(1);
+            if (!ctx.performed) { return; }
 
-            player.Controls.Player.Use.performed += ctx => CmdUseActiveItem();
-            player.Controls.Player.Drop.performed += ctx => CmdDropActiveItem();
+            InventoryManager.singleton.ChangeItem(0);
         }
 
-        public void AddItem(SimpleItem info)
+        public void ChangeItemToSeconded(InputAction.CallbackContext ctx)
         {
-            if (itemArray.Count >= MaxItems) { return; }
+            if (!isLocalPlayer) { return; }
 
-            itemArray.Add(info);
+            if (!ctx.performed) { return; }
+
+            InventoryManager.singleton.ChangeItem(1);
         }
 
-        public void RemoveItem(SimpleItem info)
+        public void UseActiveItem(InputAction.CallbackContext ctx)
         {
-            itemArray.Remove(info);
-        }
+            if (!isLocalPlayer) { return; }
 
-        [Command]
-        void CmdChangeActiveItem(int newIndex)
-        {
-            if (activeItemPrefab != null)
-            {
-                Destroy(activeItemPrefab);
-                NetworkServer.UnSpawn(activeItemPrefab);
-            }
+            if (!ctx.performed) { return; }
 
-            if (itemArray.Count <= newIndex) { return; }
-
-            SimpleItem info = itemArray[newIndex];
-
-            if (info == null) { return; }
-
-            activeItemPrefab = Instantiate(info.itemPrefab.gameObject);
-            NetworkServer.Spawn(activeItemPrefab);
-            activeItemPrefab.GetComponent<BasicItem>().netIdentity.RemoveClientAuthority();
-            activeItemPrefab.GetComponent<BasicItem>().netIdentity.AssignClientAuthority(connectionToClient);
-            activeItemPrefab.GetComponent<BasicItem>().holder = transform;
-            activeItemPrefab.GetComponent<BasicItem>().itemInfo = info;
-            RpcSetCollision(activeItemPrefab, false);
-        }
-
-        [ClientRpc]
-        void RpcSetCollision(GameObject item, bool enable)
-        {
-            if (item.GetComponent<Collider>() == null) { return; }
-
-            item.GetComponent<Collider>().enabled = enable;
-            /*foreach (var collider in item.GetComponentsInChildren<Collider>())
-            {
-                collider.enabled = enable;
-            }*/
-        }
-
-        [Command]
-        void CmdUseActiveItem()
-        {
-            if (activeItemPrefab == null) { return; }
-
-            activeItemPrefab.GetComponent<BasicItem>().Use();
-        }
-
-        [Command]
-        void CmdDropActiveItem()
-        {
-            if (activeItemPrefab == null) { return; }
-
-            activeItemPrefab.GetComponent<BasicItem>().holder = null;
-            RpcSetCollision(activeItemPrefab, true);
-            activeItemPrefab = null;
-
-            RemoveItem(activeItemPrefab.GetComponent<BasicItem>().itemInfo);
+            InventoryManager.singleton.UseItem();
         }
     }
 }
