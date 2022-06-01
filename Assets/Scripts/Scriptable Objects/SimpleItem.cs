@@ -21,6 +21,7 @@ namespace Com.Dot.SZN.ScriptableObjects
         #region Item Virtuals
         public virtual void Pickup() { }
         public virtual void Drop() { }
+        public virtual void Equip() { }
         public virtual void Use() { }
         #endregion
     }

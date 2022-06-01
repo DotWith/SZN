@@ -1,5 +1,6 @@
 using Com.Dot.SZN.ScriptableObjects;
 using Mirror;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -19,6 +20,7 @@ namespace Com.Dot.SZN.InventorySystem
         public static InventoryManager singleton { get; private set; }
 
         InventoryList<string> items = new InventoryList<string>();
+        List<SimpleItem> loadedItems = new List<SimpleItem>();
 
         int activeItem;
 
@@ -34,6 +36,19 @@ namespace Com.Dot.SZN.InventorySystem
             NetworkClient.RegisterHandler<RemoveItem>(OnRemoveItem);
             NetworkClient.RegisterHandler<ChangeItem>(OnChangeItem);
             NetworkClient.RegisterHandler<UseItem>(OnUseItem);
+        }
+
+        public void UnregisterClient()
+        {
+            NetworkClient.UnregisterHandler<Item>();
+            NetworkClient.UnregisterHandler<RemoveItem>();
+            NetworkClient.UnregisterHandler<ChangeItem>();
+            NetworkClient.UnregisterHandler<UseItem>();
+        }
+
+        public void SetupServer()
+        {
+            loadedItems = Resources.LoadAll<SimpleItem>("Items").ToList();
         }
 
         #region Client Callbacks
@@ -77,6 +92,13 @@ namespace Com.Dot.SZN.InventorySystem
             if (items.ToList().Count >= maxItems)
                 return;
 
+            SimpleItem item = FindItem(items.GetValue(activeItem));
+
+            if (item == null)
+                return;
+
+            item.Pickup();
+
             items.AddValue(activeItem, msg.id);
         }
 
@@ -85,6 +107,13 @@ namespace Com.Dot.SZN.InventorySystem
             // Checks if the item is the same
             if (activeItem.Equals(msg.activeItem))
                 return;
+
+            SimpleItem item = FindItem(items.GetValue(activeItem));
+
+            if (item == null)
+                return;
+
+            item.Drop();
 
             items.DeleteValue(activeItem);
         }
@@ -96,6 +125,13 @@ namespace Com.Dot.SZN.InventorySystem
                 return;
 
             activeItem = msg.index;
+
+            SimpleItem item = FindItem(items.GetValue(activeItem));
+
+            if (item == null)
+                return;
+
+            item.Equip();
         }
 
         void OnUseItem(UseItem msg)
@@ -104,14 +140,18 @@ namespace Com.Dot.SZN.InventorySystem
             if (!activeItem.Equals(msg.activeItem))
                 return;
 
-            SimpleItem item = Resources.LoadAll<SimpleItem>("Items").ToList().Find(i => i.id == items.GetValue(activeItem));
+            SimpleItem item = FindItem(items.GetValue(activeItem));
 
             if (item == null)
                 return;
 
-            Debug.Log($"ItemUse: {item.name}");
             item.Use();
         }
         #endregion // Registered Handles
+
+        SimpleItem FindItem(string id)
+        {
+            return loadedItems.Find(i => i.id == id);
+        }
     }
 }

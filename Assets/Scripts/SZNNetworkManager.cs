@@ -1,3 +1,4 @@
+using Com.Dot.SZN.InventorySystem;
 using Mirror;
 using System.Linq;
 using UnityEngine;
@@ -16,7 +17,19 @@ namespace Com.Dot.SZN
         public override void OnStartClient()
         {
             base.OnStartClient();
-            InventorySystem.InventoryManager.singleton.SetupClient();
+            InventoryManager.singleton.SetupClient();
+        }
+
+        public override void OnStopClient()
+        {
+            base.OnStopClient();
+            InventoryManager.singleton.UnregisterClient();
+        }
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            InventoryManager.singleton.SetupServer();
         }
     }
 }
