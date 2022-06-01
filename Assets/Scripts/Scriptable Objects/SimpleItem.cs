@@ -13,16 +13,13 @@ namespace Com.Dot.SZN.ScriptableObjects
 
         public Sprite icon;
 
-        public void Reset()
-        {
-            id = Guid.NewGuid().ToString();
-        }
+        public void Reset() => id = Guid.NewGuid().ToString();
 
         #region Item Virtuals
-        public virtual void Pickup() { }
-        public virtual void Drop() { }
-        public virtual void Equip() { }
-        public virtual void Use() { }
+        public virtual void OnPickup() { }
+        public virtual void OnDrop() { }
+        public virtual void OnEquip() { }
+        public virtual void OnUse() { }
         #endregion
     }
 }

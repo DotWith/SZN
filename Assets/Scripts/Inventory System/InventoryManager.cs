@@ -89,7 +89,7 @@ namespace Com.Dot.SZN.InventorySystem
         void OnItem(Item msg)
         {
             // Checks if we are going above the limit
-            if (items.ToList().Count >= maxItems)
+            if (items.GetCount() >= maxItems)
                 return;
 
             SimpleItem item = FindItem(items.GetValue(activeItem));
@@ -97,7 +97,7 @@ namespace Com.Dot.SZN.InventorySystem
             if (item == null)
                 return;
 
-            item.Pickup();
+            item.OnPickup();
 
             items.AddValue(activeItem, msg.id);
         }
@@ -113,7 +113,7 @@ namespace Com.Dot.SZN.InventorySystem
             if (item == null)
                 return;
 
-            item.Drop();
+            item.OnDrop();
 
             items.DeleteValue(activeItem);
         }
@@ -121,7 +121,7 @@ namespace Com.Dot.SZN.InventorySystem
         void OnChangeItem(ChangeItem msg)
         {
             // Checks if the item we want to change to exists
-            if (items.ToList().Count < msg.index)
+            if (items.GetCount() < msg.index)
                 return;
 
             activeItem = msg.index;
@@ -131,7 +131,7 @@ namespace Com.Dot.SZN.InventorySystem
             if (item == null)
                 return;
 
-            item.Equip();
+            item.OnEquip();
         }
 
         void OnUseItem(UseItem msg)
@@ -145,7 +145,7 @@ namespace Com.Dot.SZN.InventorySystem
             if (item == null)
                 return;
 
-            item.Use();
+            item.OnUse();
         }
         #endregion // Registered Handles
 

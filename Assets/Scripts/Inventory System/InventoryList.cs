@@ -44,6 +44,29 @@ namespace Com.Dot.SZN.InventorySystem
             return default(T);
         }
 
+        public int GetCount()
+        {
+            try
+            {
+                Node<T> t = Head;
+                var newList = new List<T>();
+
+                while (t != null)
+                {
+                    newList.Add(t.Value);
+                    t = t.Next;
+                }
+
+                return newList.Count;
+            }
+            catch
+            {
+
+            }
+
+            return 0;
+        }
+
         public void AddValue(int pos, T val)
         {
             try
@@ -104,20 +127,6 @@ namespace Com.Dot.SZN.InventorySystem
 
             }
             return default(T);
-        }
-
-        public List<T> ToList()
-        {
-            Node<T> t = Head;
-            var newList = new List<T>();
-
-            while (t != null)
-            {
-                newList.Add(t.Value);
-                t = t.Next;
-            }
-
-            return newList;
         }
     }
 }
