@@ -3177,6 +3177,7 @@ MonoBehaviour:
   _allPlayersReady: 0
   roomSlots: []
   clientIndex: 0
+  hud: {fileID: 5479775479681873865, guid: 978508fda30ec7a4f9669046ef0c7e9e, type: 3}
 --- !u!1 &882224226
 GameObject:
   m_ObjectHideFlags: 0

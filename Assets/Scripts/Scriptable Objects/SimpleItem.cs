@@ -16,8 +16,8 @@ namespace Com.Dot.SZN.ScriptableObjects
         public void Reset() => id = Guid.NewGuid().ToString();
 
         #region Item Virtuals
-        public virtual void OnPickup() { }
-        public virtual void OnDrop() { }
+        public virtual void OnAdd() { }
+        public virtual void OnRemove() { }
         public virtual void OnEquip() { }
         public virtual void OnUse() { }
         #endregion

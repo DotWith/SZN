@@ -1,30 +1,26 @@
 using Com.Dot.SZN.InventorySystem;
 using Mirror;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 
 namespace Com.Dot.SZN.Characters
 {
+    [RequireComponent(typeof(Inventory))]
     public class PlayerInventory : NetworkBehaviour
     {
         [SerializeField] Player player;
         [SerializeField] Transform viewModelTransform;
         [SerializeField] int viewModelLayer;
 
+        int localActiveItem;
+        Inventory inventory;
+
         GameObject currentViewModel;
 
-        public override void OnStartAuthority()
+        public void Start()
         {
-            InventoryManager.singleton.onSyncItems += OnSyncItems;
-            InventoryManager.singleton.onRemoveItem += OnDropItem;
-        }
-
-        public override void OnStopAuthority()
-        {
-            InventoryManager.singleton.onSyncItems -= OnSyncItems;
-            InventoryManager.singleton.onRemoveItem -= OnDropItem;
+            inventory = GetComponent<Inventory>();
         }
 
         #region Input Actions
@@ -34,7 +30,7 @@ namespace Com.Dot.SZN.Characters
 
             if (!ctx.performed) { return; }
 
-            InventoryManager.singleton.ChangeItem(0);
+            ChangeItem(0);
         }
 
         public void ChangeItemToSeconded(InputAction.CallbackContext ctx)
@@ -43,7 +39,7 @@ namespace Com.Dot.SZN.Characters
 
             if (!ctx.performed) { return; }
 
-            InventoryManager.singleton.ChangeItem(1);
+            ChangeItem(1);
         }
 
         public void UseActiveItem(InputAction.CallbackContext ctx)
@@ -52,7 +48,7 @@ namespace Com.Dot.SZN.Characters
 
             if (!ctx.performed) { return; }
 
-            InventoryManager.singleton.UseItem();
+            inventory.UseItem(localActiveItem);
         }
 
         public void RemoveActiveItem(InputAction.CallbackContext ctx)
@@ -61,16 +57,23 @@ namespace Com.Dot.SZN.Characters
 
             if (!ctx.performed) { return; }
 
-            InventoryManager.singleton.RemoveItem();
+            inventory.RemoveItem(localActiveItem);
         }
         #endregion // Input Actions
 
-        void OnSyncItems(InventoryList<string> items, int activeItem)
+        void ChangeItem(int index)
+        {
+            inventory.ChangeItem(index);
+            localActiveItem = index;
+            SyncItems();
+        }
+
+        void SyncItems()
         {
             if (currentViewModel != null)
                 Destroy(currentViewModel);
 
-            var item = InventoryManager.singleton.GetItem(items.GetValue(activeItem));
+            var item = InventoryManager.singleton.GetItem(localActiveItem);
             
             if (item == null) { return; }
 
@@ -85,7 +88,7 @@ namespace Com.Dot.SZN.Characters
             }
         }
 
-        void OnDropItem()
+        void RemoveItem()
         {
             Debug.Log("Drop item");
 

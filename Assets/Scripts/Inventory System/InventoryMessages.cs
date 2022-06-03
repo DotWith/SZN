@@ -1,3 +1,4 @@
+using Com.Dot.SZN.Characters;
 using Mirror;
 using UnityEngine;
 
@@ -6,22 +7,21 @@ namespace Com.Dot.SZN.InventorySystem
     public struct Item : NetworkMessage
     {
         public string id;
-        public GameObject obj;
 
-        public Item(string id, GameObject obj)
+        public Item(string id)
         {
             this.id = id;
-            this.obj = obj;
         }
     }
 
     public struct RemoveItem : NetworkMessage
     {
-        public int activeItem;
+        // TODO: Change this to a string
+        public int index;
 
-        public RemoveItem(int activeItem)
+        public RemoveItem(int index)
         {
-            this.activeItem = activeItem;
+            this.index = index;
         }
     }
 
@@ -37,11 +37,11 @@ namespace Com.Dot.SZN.InventorySystem
 
     public struct UseItem : NetworkMessage
     {
-        public int activeItem;
+        public int index;
 
-        public UseItem(int activeItem)
+        public UseItem(int index)
         {
-            this.activeItem = activeItem;
+            this.index = index;
         }
     }
 }

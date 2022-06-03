@@ -1,7 +1,5 @@
-using Com.Dot.SZN.Characters;
 using Com.Dot.SZN.ScriptableObjects;
 using Mirror;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -24,9 +22,6 @@ namespace Com.Dot.SZN.InventorySystem
         InventoryList<string> items = new InventoryList<string>();
         List<SimpleItem> loadedItems = new List<SimpleItem>();
 
-        public Action<InventoryList<string>, int> onSyncItems;
-        public Action onRemoveItem;
-
         int activeItem;
 
         public void Awake()
@@ -37,8 +32,7 @@ namespace Com.Dot.SZN.InventorySystem
 
         public void Start()
         {
-            // TODO: Make server sided
-            //loadedItems = Resources.LoadAll<SimpleItem>("Items").ToList();
+            loadedItems = Resources.LoadAll<SimpleItem>("Items").ToList();
         }
 
         public void SetupClient()
@@ -59,46 +53,7 @@ namespace Com.Dot.SZN.InventorySystem
 
         public void SetupServer()
         {
-            loadedItems = Resources.LoadAll<SimpleItem>("Items").ToList();
         }
-
-        #region Client Callbacks
-        /// <summary>Add said item from this inventory</summary>
-        /// <param name="id"></param>
-        [ClientCallback]
-        public void AddItem(string id, GameObject obj)
-        {
-            var msg = new Item(id, obj);
-            NetworkServer.SendToAll(msg);
-        }
-
-        /// <summary>Remove said item from this inventory</summary>
-        /// <param name="id"></param>
-        [ClientCallback]
-        public void RemoveItem()
-        {
-            var msg = new RemoveItem(activeItem);
-            NetworkServer.SendToAll(msg);
-
-            onRemoveItem?.Invoke();
-        }
-
-        [ClientCallback]
-        public void ChangeItem(int index)
-        {
-            var msg = new ChangeItem(index);
-            NetworkServer.SendToAll(msg);
-
-            SyncItems();
-        }
-
-        [ClientCallback]
-        public void UseItem()
-        {
-            var msg = new UseItem(activeItem);
-            NetworkServer.SendToAll(msg);
-        }
-        #endregion // Client Callbacks
 
         #region Registered Handles
         void OnItem(Item msg)
@@ -109,28 +64,26 @@ namespace Com.Dot.SZN.InventorySystem
 
             items.AddValue(activeItem, msg.id);
 
-            SimpleItem item = GetItem(items.GetValue(activeItem));
+            SimpleItem item = GetItem(activeItem);
 
             if (item == null)
                 return;
 
-            item.OnPickup();
-
-            NetworkServer.Destroy(msg.obj);
+            item.OnAdd();
         }
         
         void OnRemoveItem(RemoveItem msg)
         {
             // Checks if the item is the same
-            if (activeItem.Equals(msg.activeItem))
+            if (activeItem.Equals(msg.index))
                 return;
 
-            SimpleItem item = GetItem(items.GetValue(activeItem));
+            SimpleItem item = GetItem(activeItem);
 
             if (item == null)
                 return;
 
-            item.OnDrop();
+            item.OnRemove();
 
             items.DeleteValue(activeItem);
         }
@@ -143,7 +96,7 @@ namespace Com.Dot.SZN.InventorySystem
 
             activeItem = msg.index;
 
-            SimpleItem item = GetItem(items.GetValue(activeItem));
+            SimpleItem item = GetItem(activeItem);
 
             if (item == null)
                 return;
@@ -154,10 +107,10 @@ namespace Com.Dot.SZN.InventorySystem
         void OnUseItem(UseItem msg)
         {
             // Checks if we are selecting that item
-            if (!activeItem.Equals(msg.activeItem))
+            if (!activeItem.Equals(msg.index))
                 return;
 
-            SimpleItem item = GetItem(items.GetValue(activeItem));
+            SimpleItem item = GetItem(activeItem);
 
             if (item == null)
                 return;
@@ -166,22 +119,6 @@ namespace Com.Dot.SZN.InventorySystem
         }
         #endregion // Registered Handles
 
-        /*[Server]
-        public void Update()
-        {
-            InvokeRepeating(nameof(VerifyInventories), 3f, 3f);
-        }
-
-        [ServerCallback]
-        public void VerifyInventories()
-        {
-            Debug.Log("Verify All Inventories");
-        }*/
-
-        // SECURTY!
-        void SyncItems() => onSyncItems?.Invoke(items, activeItem);
-
-        [Server]
-        public SimpleItem GetItem(string id) => loadedItems.Find(i => i.id == id);
+        public SimpleItem GetItem(int id) => loadedItems.Find(i => i.id == items.GetValue(id));
     }
 }

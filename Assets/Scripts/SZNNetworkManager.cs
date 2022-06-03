@@ -7,6 +7,8 @@ namespace Com.Dot.SZN
 {
     public class SZNNetworkManager : NetworkRoomManager
     {
+        public GameObject hud;
+
         public override void Awake()
         {
             base.Awake();
@@ -30,6 +32,17 @@ namespace Com.Dot.SZN
         {
             base.OnStartServer();
             InventoryManager.singleton.SetupServer();
+        }
+
+        public override void OnClientSceneChanged()
+        {
+            base.OnClientSceneChanged();
+
+            if (IsSceneActive(GameplayScene))
+            {
+                if (NetworkClient.isConnected)
+                    Instantiate(hud);
+            }
         }
     }
 }
