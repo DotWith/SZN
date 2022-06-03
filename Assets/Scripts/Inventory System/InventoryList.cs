@@ -128,5 +128,19 @@ namespace Com.Dot.SZN.InventorySystem
             }
             return default(T);
         }
+
+        /*public List<T> ToList()
+        {
+            Node<T> t = Head;
+            var newList = new List<T>();
+
+            while (t != null)
+            {
+                newList.Add(t.Value);
+                t = t.Next;
+            }
+
+            return newList;
+        }*/
     }
 }

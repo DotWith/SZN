@@ -1,5 +1,4 @@
 using Mirror;
-using System;
 using UnityEngine;
 
 namespace Com.Dot.SZN.InventorySystem
@@ -7,21 +6,21 @@ namespace Com.Dot.SZN.InventorySystem
     public struct Item : NetworkMessage
     {
         public string id;
+        public GameObject obj;
 
-        public Item(string id)
+        public Item(string id, GameObject obj)
         {
             this.id = id;
+            this.obj = obj;
         }
     }
 
     public struct RemoveItem : NetworkMessage
     {
-        public string id;
         public int activeItem;
 
-        public RemoveItem(string id, int activeItem)
+        public RemoveItem(int activeItem)
         {
-            this.id = id;
             this.activeItem = activeItem;
         }
     }

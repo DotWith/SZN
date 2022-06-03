@@ -1,5 +1,7 @@
+using Com.Dot.SZN.Characters;
 using Com.Dot.SZN.ScriptableObjects;
 using Mirror;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -22,12 +24,21 @@ namespace Com.Dot.SZN.InventorySystem
         InventoryList<string> items = new InventoryList<string>();
         List<SimpleItem> loadedItems = new List<SimpleItem>();
 
+        public Action<InventoryList<string>, int> onSyncItems;
+        public Action onRemoveItem;
+
         int activeItem;
 
         public void Awake()
         {
             singleton = this;
             DontDestroyOnLoad(gameObject);
+        }
+
+        public void Start()
+        {
+            // TODO: Make server sided
+            //loadedItems = Resources.LoadAll<SimpleItem>("Items").ToList();
         }
 
         public void SetupClient()
@@ -55,19 +66,21 @@ namespace Com.Dot.SZN.InventorySystem
         /// <summary>Add said item from this inventory</summary>
         /// <param name="id"></param>
         [ClientCallback]
-        public void AddItem(string id)
+        public void AddItem(string id, GameObject obj)
         {
-            var msg = new Item(id);
+            var msg = new Item(id, obj);
             NetworkServer.SendToAll(msg);
         }
 
         /// <summary>Remove said item from this inventory</summary>
         /// <param name="id"></param>
         [ClientCallback]
-        public void RemoveItem(string id)
+        public void RemoveItem()
         {
-            var msg = new RemoveItem(id, activeItem);
+            var msg = new RemoveItem(activeItem);
             NetworkServer.SendToAll(msg);
+
+            onRemoveItem?.Invoke();
         }
 
         [ClientCallback]
@@ -75,6 +88,8 @@ namespace Com.Dot.SZN.InventorySystem
         {
             var msg = new ChangeItem(index);
             NetworkServer.SendToAll(msg);
+
+            SyncItems();
         }
 
         [ClientCallback]
@@ -92,23 +107,25 @@ namespace Com.Dot.SZN.InventorySystem
             if (items.GetCount() >= maxItems)
                 return;
 
-            SimpleItem item = FindItem(items.GetValue(activeItem));
+            items.AddValue(activeItem, msg.id);
+
+            SimpleItem item = GetItem(items.GetValue(activeItem));
 
             if (item == null)
                 return;
 
             item.OnPickup();
 
-            items.AddValue(activeItem, msg.id);
+            NetworkServer.Destroy(msg.obj);
         }
-
+        
         void OnRemoveItem(RemoveItem msg)
         {
             // Checks if the item is the same
             if (activeItem.Equals(msg.activeItem))
                 return;
 
-            SimpleItem item = FindItem(items.GetValue(activeItem));
+            SimpleItem item = GetItem(items.GetValue(activeItem));
 
             if (item == null)
                 return;
@@ -126,7 +143,7 @@ namespace Com.Dot.SZN.InventorySystem
 
             activeItem = msg.index;
 
-            SimpleItem item = FindItem(items.GetValue(activeItem));
+            SimpleItem item = GetItem(items.GetValue(activeItem));
 
             if (item == null)
                 return;
@@ -140,7 +157,7 @@ namespace Com.Dot.SZN.InventorySystem
             if (!activeItem.Equals(msg.activeItem))
                 return;
 
-            SimpleItem item = FindItem(items.GetValue(activeItem));
+            SimpleItem item = GetItem(items.GetValue(activeItem));
 
             if (item == null)
                 return;
@@ -149,9 +166,22 @@ namespace Com.Dot.SZN.InventorySystem
         }
         #endregion // Registered Handles
 
-        SimpleItem FindItem(string id)
+        /*[Server]
+        public void Update()
         {
-            return loadedItems.Find(i => i.id == id);
+            InvokeRepeating(nameof(VerifyInventories), 3f, 3f);
         }
+
+        [ServerCallback]
+        public void VerifyInventories()
+        {
+            Debug.Log("Verify All Inventories");
+        }*/
+
+        // SECURTY!
+        void SyncItems() => onSyncItems?.Invoke(items, activeItem);
+
+        [Server]
+        public SimpleItem GetItem(string id) => loadedItems.Find(i => i.id == id);
     }
 }

@@ -9,13 +9,10 @@ namespace Com.Dot.SZN.Interactables
     {
         public SimpleItem itemInfo;
 
-        public void Interact() => CmdInteract();
-
         [Command(requiresAuthority = false)]
-        void CmdInteract(NetworkConnectionToClient sender = null)
+        public void Interact()
         {
-            InventoryManager.singleton.AddItem(itemInfo.id);
-            NetworkServer.Destroy(gameObject);
+            InventoryManager.singleton.AddItem(itemInfo.id, gameObject);
         }
     }
 }

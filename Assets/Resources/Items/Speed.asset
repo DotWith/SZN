@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Speed
   m_EditorClassIdentifier: 
   id: 2073d52b-5d37-42f8-97f4-c386dc19a811
-  prefab: {fileID: 2268063827810515781, guid: 9febf7485b99e0f4696e5e715af9ebbb, type: 3}
+  prefab: {fileID: 919132149155446097, guid: 3740940caab088444bb95a968544e92d, type: 3}
   icon: {fileID: 0}
   speed: 2
   time: 5

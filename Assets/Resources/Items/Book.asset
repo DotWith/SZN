@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 123c773729929f143ac764a2b69cce66, type: 3}
   m_Name: Book
   m_EditorClassIdentifier: 
-  id: 3a048dff-480a-4f87-983a-15faa50fab8e
-  prefab: {fileID: 2327652951499314974, guid: 6e867908f193ec846858e26cef29eb0e, type: 3}
+  id: a71d06ab-c916-4765-8f5c-780958f1b6f4
+  prefab: {fileID: 919132149155446097, guid: 3740940caab088444bb95a968544e92d, type: 3}
   icon: {fileID: 21300000, guid: 7adc74c395b875d45b1778ac2711339e, type: 3}
