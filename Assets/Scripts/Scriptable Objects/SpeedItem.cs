@@ -10,12 +10,9 @@ namespace Com.Dot.SZN.ScriptableObjects
         public float speed = 2;
         public float time = 5;
 
-        public override void OnUse() => CmdSetMovementSpeed();
-
-        [Command(requiresAuthority = false)]
-        void CmdSetMovementSpeed(NetworkConnectionToClient sender = null)
+        public override void OnUse()
         {
-            sender.identity.GetComponent<Player>().move.SetMovementSpeed(speed, time);
+            NetworkClient.localPlayer.GetComponent<Player>().move.SetMovementSpeed(speed, time);
         }
     }
 }

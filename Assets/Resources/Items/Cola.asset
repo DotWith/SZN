@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4ea71e0987e6f0849bc3d580065a10c8, type: 3}
-  m_Name: Speed
+  m_Name: Cola
   m_EditorClassIdentifier: 
   id: 2073d52b-5d37-42f8-97f4-c386dc19a811
-  prefab: {fileID: 919132149155446097, guid: 3740940caab088444bb95a968544e92d, type: 3}
+  prefab: {fileID: 919132149155446097, guid: bdb9987433f6e7c4bbd8baa04c333789, type: 3}
   icon: {fileID: 0}
+  showToList: 1
   speed: 2
   time: 5

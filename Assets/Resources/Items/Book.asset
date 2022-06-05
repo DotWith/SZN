@@ -15,3 +15,4 @@ MonoBehaviour:
   id: a71d06ab-c916-4765-8f5c-780958f1b6f4
   prefab: {fileID: 919132149155446097, guid: 3740940caab088444bb95a968544e92d, type: 3}
   icon: {fileID: 21300000, guid: 7adc74c395b875d45b1778ac2711339e, type: 3}
+  showToList: 1

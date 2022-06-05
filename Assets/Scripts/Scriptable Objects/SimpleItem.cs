@@ -10,8 +10,8 @@ namespace Com.Dot.SZN.ScriptableObjects
         public string id;
 
         public GameObject prefab;
-
         public Sprite icon;
+        public bool showToList = false;
 
         public void Reset() => id = Guid.NewGuid().ToString();
 

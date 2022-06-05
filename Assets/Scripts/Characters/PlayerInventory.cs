@@ -57,7 +57,7 @@ namespace Com.Dot.SZN.Characters
 
             if (!ctx.performed) { return; }
 
-            inventory.RemoveItem(localActiveItem);
+            RemoveItem();
         }
         #endregion // Input Actions
 
@@ -90,12 +90,10 @@ namespace Com.Dot.SZN.Characters
 
         void RemoveItem()
         {
-            Debug.Log("Drop item");
+            inventory.RemoveItem(localActiveItem);
 
             if (currentViewModel != null)
                 Destroy(currentViewModel);
-
-
         }
 
         void ModifyViewModelObject(GameObject obj)
