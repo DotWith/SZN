@@ -14,8 +14,8 @@ namespace Com.Dot.SZN.Interactables
         [Command(requiresAuthority = false)]
         void CmdInteract(NetworkConnectionToClient sender = null)
         {
-            sender.identity.GetComponent<Inventory>().AddItem(itemInfo.id);
-            NetworkServer.Destroy(gameObject);
+            if (sender.identity.GetComponent<Inventory>().AddItem(itemInfo.id))
+                NetworkServer.Destroy(gameObject);
         }
     }
 }

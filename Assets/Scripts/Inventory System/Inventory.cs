@@ -1,43 +1,112 @@
+using Com.Dot.SZN.ScriptableObjects;
 using Mirror;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Com.Dot.SZN.InventorySystem
 {
     [DisallowMultipleComponent]
-    public class Inventory : MonoBehaviour
+    public class Inventory : NetworkBehaviour
     {
+        public readonly SyncList<string> items = new SyncList<string>();
+
+        [SyncVar(hook = nameof(OnChangeItem))]
+        public int activeItem;
+
+        public int maxItems = 2;
+
+        public Action<IReadOnlyCollection<string>, int> onSyncItems;
+
+        public override void OnStartClient()
+        {
+            items.Callback += OnItemsUpdated;
+
+            for (int i = 0; i < items.Count; i++)
+                OnItemsUpdated(SyncList<string>.Operation.OP_ADD, i, string.Empty, items[i]);
+        }
+
         #region Voids
         /// <summary>Add said item from this inventory</summary>
         /// <param name="id"></param>
-        public void AddItem(string id)
+        public bool AddItem(string id)
         {
-            var msg = new Item(id);
-            NetworkServer.SendToAll(msg);
+            CmdAddItem(id);
+
+            return items.Contains(id);
         }
 
         /// <summary>Remove said item from this inventory</summary>
         /// <param name="index"></param>
-        public void RemoveItem(int index)
-        {
-            var msg = new RemoveItem(index);
-            NetworkServer.SendToAll(msg);
-        }
+        public void RemoveItem(string id) => CmdRemoveItem(id);
 
         /// <summary>Change to this index</summary>
         /// <param name="index"></param>
-        public void ChangeItem(int index)
+        public void ChangeItem(int index) => CmdChangeItem(index);
+
+        /// <summary>Use active item</summary>
+        public void UseActiveItem() => CmdUseActiveItem();
+        #endregion // Voids
+
+        #region Commands
+        [Command(requiresAuthority = false)]
+        void CmdAddItem(string id)
         {
-            var msg = new ChangeItem(index);
-            NetworkServer.SendToAll(msg);
+            if (!(items.Count < maxItems)) { return; }
+
+            items.Add(id);
+            GetItem(activeItem).OnAdd(netIdentity);
         }
 
-        /// <summary>Use said item at that index</summary>
-        /// <param name="index"></param>
-        public void UseItem(int index)
+        [Command]
+        void CmdRemoveItem(string id)
         {
-            var msg = new UseItem(index);
-            NetworkServer.SendToAll(msg);
+            items.Remove(id);
+            GetItem(activeItem).OnRemove(netIdentity);
         }
-        #endregion // Voids
+
+        [Command]
+        void CmdChangeItem(int index)
+        {
+            activeItem = index;
+            GetItem(activeItem).OnEquip(netIdentity);
+        }
+
+        [Command]
+        void CmdUseActiveItem() => GetItem(activeItem).OnUse(netIdentity);
+        #endregion // Commands
+
+        #region Find Items
+        List<SimpleItem> loadedItems = new List<SimpleItem>();
+
+        public void Start() => loadedItems = Resources.LoadAll<SimpleItem>("Items").ToList();
+
+        public SimpleItem GetItem(int id) => loadedItems.Find(i => i.id == items[id]);
+        #endregion // Find Items
+
+        void OnItemsUpdated(SyncList<string>.Operation op, int index, string oldItem, string newItem)
+        {
+            onSyncItems?.Invoke(items.ToList().AsReadOnly(), activeItem);
+
+            switch (op)
+            {
+                case SyncList<string>.Operation.OP_ADD:
+                    break;
+                case SyncList<string>.Operation.OP_INSERT:
+                    break;
+                case SyncList<string>.Operation.OP_REMOVEAT:
+                    break;
+                case SyncList<string>.Operation.OP_SET:
+                    break;
+                case SyncList<string>.Operation.OP_CLEAR:
+                    break;
+            }
+        }
+
+        void OnChangeItem(int oldItem, int newItem)
+        {
+            onSyncItems?.Invoke(items.ToList().AsReadOnly(), newItem);
+        }
     }
 }

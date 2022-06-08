@@ -1,5 +1,6 @@
 using Com.Dot.SZN.InventorySystem;
 using Mirror;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -10,17 +11,32 @@ namespace Com.Dot.SZN.Characters
     public class PlayerInventory : NetworkBehaviour
     {
         [SerializeField] Player player;
+        [SerializeField] Inventory inventory;
+
+        [Header("Properties")]
         [SerializeField] Transform viewModelTransform;
+        [SerializeField] Transform worldModelTransform;
         [SerializeField] int viewModelLayer;
 
-        int localActiveItem;
-        Inventory inventory;
-
         GameObject currentViewModel;
+        GameObject currentWorldModel;
 
         public void Start()
         {
-            inventory = GetComponent<Inventory>();
+            if (!hasAuthority)
+            {
+                inventory.onSyncItems += OnOthersSyncItems;
+            }
+        }
+
+        public override void OnStartAuthority()
+        {
+            inventory.onSyncItems += OnClientSyncItems;
+        }
+
+        public override void OnStopAuthority()
+        {
+            inventory.onSyncItems -= OnClientSyncItems;
         }
 
         #region Input Actions
@@ -30,7 +46,7 @@ namespace Com.Dot.SZN.Characters
 
             if (!ctx.performed) { return; }
 
-            ChangeItem(0);
+            inventory.ChangeItem(0);
         }
 
         public void ChangeItemToSeconded(InputAction.CallbackContext ctx)
@@ -39,7 +55,7 @@ namespace Com.Dot.SZN.Characters
 
             if (!ctx.performed) { return; }
 
-            ChangeItem(1);
+            inventory.ChangeItem(1);
         }
 
         public void UseActiveItem(InputAction.CallbackContext ctx)
@@ -48,7 +64,7 @@ namespace Com.Dot.SZN.Characters
 
             if (!ctx.performed) { return; }
 
-            inventory.UseItem(localActiveItem);
+            inventory.UseActiveItem();
         }
 
         public void RemoveActiveItem(InputAction.CallbackContext ctx)
@@ -61,21 +77,16 @@ namespace Com.Dot.SZN.Characters
         }
         #endregion // Input Actions
 
-        void ChangeItem(int index)
+        #region Item
+        void OnClientSyncItems(IReadOnlyCollection<string> items, int activeItem)
         {
-            inventory.ChangeItem(index);
-            localActiveItem = index;
-            SyncItems();
-        }
+            Debug.Log($"Items: {items} ActiveItem: {activeItem}");
+            var item = inventory.GetItem(activeItem);
 
-        void SyncItems()
-        {
+            if (item == null) { return; }
+
             if (currentViewModel != null)
                 Destroy(currentViewModel);
-
-            var item = InventoryManager.singleton.GetItem(localActiveItem);
-            
-            if (item == null) { return; }
 
             currentViewModel = Instantiate(item.prefab, viewModelTransform);
 
@@ -88,9 +99,27 @@ namespace Com.Dot.SZN.Characters
             }
         }
 
+        void OnOthersSyncItems(IReadOnlyCollection<string> items, int activeItem)
+        {
+            var item = inventory.GetItem(activeItem);
+
+            if (item == null) { return; }
+
+            if (currentWorldModel != null)
+            {
+                Destroy(currentWorldModel);
+            }
+
+            currentWorldModel = Instantiate(item.prefab, worldModelTransform);
+        }
+
         void RemoveItem()
         {
-            inventory.RemoveItem(localActiveItem);
+            var item = inventory.GetItem(inventory.activeItem);
+
+            if (item == null) { return; }
+
+            inventory.RemoveItem(item.id);
 
             if (currentViewModel != null)
                 Destroy(currentViewModel);
@@ -101,5 +130,6 @@ namespace Com.Dot.SZN.Characters
             obj.layer = viewModelLayer;
             obj.GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.Off;
         }
+        #endregion // Item
     }
 }

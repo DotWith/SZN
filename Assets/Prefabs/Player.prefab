@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &677496847149637911
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2940662093198470738}
+  m_Layer: 7
+  m_Name: ItemSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2940662093198470738
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 677496847149637911}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.534, y: 0, z: 0.914}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 176708394872908527}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1570665406428901635
 GameObject:
   m_ObjectHideFlags: 0
@@ -741,7 +772,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   player: {fileID: 8304273610227629815}
+  inventory: {fileID: 8374307070572159703}
   viewModelTransform: {fileID: 6468328595946429928}
+  worldModelTransform: {fileID: 2940662093198470738}
   viewModelLayer: 9
 --- !u!114 &4585120906821569406
 MonoBehaviour:
@@ -1017,6 +1050,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 508e62dd9d8344248b49bc64e4fae168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  activeItem: 0
+  maxItems: 2
 --- !u!1 &7852956717777688232
 GameObject:
   m_ObjectHideFlags: 0
@@ -1047,6 +1084,7 @@ Transform:
   m_Children:
   - {fileID: 6861997656588892378}
   - {fileID: 3623220850283161422}
+  - {fileID: 2940662093198470738}
   m_Father: {fileID: 7122856392962852888}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

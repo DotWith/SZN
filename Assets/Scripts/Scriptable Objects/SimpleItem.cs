@@ -1,3 +1,4 @@
+using Mirror;
 using System;
 using UnityEngine;
 
@@ -11,15 +12,15 @@ namespace Com.Dot.SZN.ScriptableObjects
 
         public GameObject prefab;
         public Sprite icon;
-        public bool showToList = false;
+        //public bool showToList = false;
 
         public void Reset() => id = Guid.NewGuid().ToString();
 
         #region Item Virtuals
-        public virtual void OnAdd() { }
-        public virtual void OnRemove() { }
-        public virtual void OnEquip() { }
-        public virtual void OnUse() { }
+        public virtual void OnAdd(NetworkIdentity owner) { }
+        public virtual void OnRemove(NetworkIdentity owner) { }
+        public virtual void OnEquip(NetworkIdentity owner) { }
+        public virtual void OnUse(NetworkIdentity owner) { }
         #endregion
     }
 }

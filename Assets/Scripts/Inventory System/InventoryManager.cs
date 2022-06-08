@@ -10,7 +10,7 @@ namespace Com.Dot.SZN.InventorySystem
     [DisallowMultipleComponent]
     public class InventoryManager : MonoBehaviour
     {
-        [Header("Inventory Settings")]
+        /*[Header("Inventory Settings")]
 
         [FormerlySerializedAs("m_MaxInventoryItems")]
         [SerializeField]
@@ -119,6 +119,6 @@ namespace Com.Dot.SZN.InventorySystem
         }
         #endregion // Registered Handles
 
-        public SimpleItem GetItem(int id) => loadedItems.Find(i => i.id == items.GetValue(id));
+        public SimpleItem GetItem(int id) => loadedItems.Find(i => i.id == items.GetValue(id));*/
     }
 }

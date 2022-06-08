@@ -230,7 +230,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2268063827810515781, guid: 9febf7485b99e0f4696e5e715af9ebbb, type: 3}
       propertyPath: m_Name
-      value: Item_Speed (1)
+      value: Item_Cola
       objectReference: {fileID: 0}
     - target: {fileID: 4037463923329850464, guid: 9febf7485b99e0f4696e5e715af9ebbb, type: 3}
       propertyPath: sceneId
@@ -612,7 +612,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1845103007435771438, guid: 6d287c3c8003f9e4d988c46f5b887be5, type: 3}
       propertyPath: m_Name
-      value: Door (1)
+      value: Door
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d287c3c8003f9e4d988c46f5b887be5, type: 3}
@@ -629,7 +629,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2327652951499314974, guid: 6e867908f193ec846858e26cef29eb0e, type: 3}
       propertyPath: m_Name
-      value: Item_Book (1)
+      value: Item_Book
       objectReference: {fileID: 0}
     - target: {fileID: 8071676497392511098, guid: 6e867908f193ec846858e26cef29eb0e, type: 3}
       propertyPath: m_RootOrder
