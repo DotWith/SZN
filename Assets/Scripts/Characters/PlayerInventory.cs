@@ -11,12 +11,12 @@ namespace Com.Dot.SZN.Characters
     public class PlayerInventory : NetworkBehaviour
     {
         [SerializeField] Player player;
-        [SerializeField] Inventory inventory;
+        public Inventory inventory;
 
         [Header("Properties")]
-        [SerializeField] Transform viewModelTransform;
-        [SerializeField] Transform worldModelTransform;
-        [SerializeField] int viewModelLayer;
+        public Transform viewModelTransform;
+        public Transform worldModelTransform;
+        public int viewModelLayer;
 
         GameObject currentViewModel;
         GameObject currentWorldModel;
@@ -26,17 +26,22 @@ namespace Com.Dot.SZN.Characters
             if (!hasAuthority)
             {
                 inventory.onSyncItems += OnOthersSyncItems;
+                inventory.onRemoveItem += OnOthersRemoveItem;
             }
+
+            inventory.onRemoveItem += OnBothRemoveItem;
         }
 
         public override void OnStartAuthority()
         {
             inventory.onSyncItems += OnClientSyncItems;
+            inventory.onRemoveItem += OnClientRemoveItem;
         }
 
         public override void OnStopAuthority()
         {
             inventory.onSyncItems -= OnClientSyncItems;
+            inventory.onRemoveItem -= OnClientRemoveItem;
         }
 
         #region Input Actions
@@ -73,7 +78,11 @@ namespace Com.Dot.SZN.Characters
 
             if (!ctx.performed) { return; }
 
-            RemoveItem();
+            var item = inventory.GetItem(inventory.activeItem);
+
+            if (item == null) { return; }
+
+            inventory.RemoveItem(item.id);
         }
         #endregion // Input Actions
 
@@ -81,12 +90,13 @@ namespace Com.Dot.SZN.Characters
         void OnClientSyncItems(IReadOnlyCollection<string> items, int activeItem)
         {
             Debug.Log($"Items: {items} ActiveItem: {activeItem}");
-            var item = inventory.GetItem(activeItem);
-
-            if (item == null) { return; }
 
             if (currentViewModel != null)
                 Destroy(currentViewModel);
+
+            var item = inventory.GetItem(activeItem);
+
+            if (item == null) { return; }
 
             currentViewModel = Instantiate(item.prefab, viewModelTransform);
 
@@ -101,34 +111,44 @@ namespace Com.Dot.SZN.Characters
 
         void OnOthersSyncItems(IReadOnlyCollection<string> items, int activeItem)
         {
+            if (currentWorldModel != null)
+                Destroy(currentWorldModel);
+
             var item = inventory.GetItem(activeItem);
 
             if (item == null) { return; }
 
-            if (currentWorldModel != null)
-            {
-                Destroy(currentWorldModel);
-            }
-
             currentWorldModel = Instantiate(item.prefab, worldModelTransform);
         }
 
-        void RemoveItem()
+        void OnClientRemoveItem(string id)
         {
-            var item = inventory.GetItem(inventory.activeItem);
-
-            if (item == null) { return; }
-
-            inventory.RemoveItem(item.id);
-
             if (currentViewModel != null)
                 Destroy(currentViewModel);
+        }
+
+        void OnOthersRemoveItem(string id)
+        {
+            if (currentWorldModel != null)
+                Destroy(currentWorldModel);
+        }
+
+        void OnBothRemoveItem(string id)
+        {
+            var singleton = NetworkManager.singleton as SZNNetworkManager;
+            var item = Instantiate(singleton.FindItem(id), player.playerCamera.transform.position, player.playerCamera.transform.rotation);
+            NetworkServer.Spawn(item);
         }
 
         void ModifyViewModelObject(GameObject obj)
         {
             obj.layer = viewModelLayer;
-            obj.GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.Off;
+
+            var rend = obj.GetComponent<Renderer>();
+
+            if (rend == null) { return; }
+
+            rend.shadowCastingMode = ShadowCastingMode.Off;
         }
         #endregion // Item
     }

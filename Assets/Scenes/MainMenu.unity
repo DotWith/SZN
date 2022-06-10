@@ -3122,19 +3122,19 @@ MonoBehaviour:
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 7122856392962852884, guid: 8fe32dbb2c555284099c739364d461cc, type: 3}
   autoCreatePlayer: 1
-  playerSpawnMethod: 0
+  playerSpawnMethod: 1
   spawnPrefabs: []
+  numberOfRounds: 1
+  mapSet: {fileID: 11400000, guid: 1e5716bac44dd9647afe6394d9b59219, type: 2}
+  hud: {fileID: 5479775479681873865, guid: 978508fda30ec7a4f9669046ef0c7e9e, type: 3}
   showRoomGUI: 1
   minPlayers: 1
-  roomPlayerPrefab: {fileID: 7553596758663774221, guid: b443cf5ccab6de645819a6bc8bc16cfe, type: 3}
+  roomPlayerPrefab: {fileID: 4355166540516504397, guid: b443cf5ccab6de645819a6bc8bc16cfe, type: 3}
   RoomScene: Assets/Scenes/MainMenu.unity
   GameplayScene: Assets/Scenes/Game.unity
   _allPlayersReady: 0
   roomSlots: []
   clientIndex: 0
-  numberOfRounds: 1
-  mapSet: {fileID: 11400000, guid: 1e5716bac44dd9647afe6394d9b59219, type: 2}
-  hud: {fileID: 5479775479681873865, guid: 978508fda30ec7a4f9669046ef0c7e9e, type: 3}
 --- !u!1 &882224226
 GameObject:
   m_ObjectHideFlags: 0

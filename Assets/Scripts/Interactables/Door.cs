@@ -23,7 +23,7 @@ namespace Com.Dot.SZN.Interactables
         public void Start()
         {
             defaultRotation = transform.eulerAngles;
-            forward = transform.right;
+            forward = transform.forward;
         }
 
         public void Interact() => CmdInteract();

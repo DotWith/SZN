@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1845103007435771434}
-  - component: {fileID: 6242942791233615474}
+  - component: {fileID: 1300215093135987863}
   - component: {fileID: 1845103007435771429}
   - component: {fileID: 1845103007435771428}
   m_Layer: 8
@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1845103007435771438}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5, z: 6.29}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -35,7 +35,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &6242942791233615474
+--- !u!65 &1300215093135987863
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -46,8 +46,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.039206475, y: 2.010775, z: 0.83687496}
-  m_Center: {x: 0.01847677, y: -0.048712015, z: 0.41491032}
+  m_Size: {x: 0.8359999, y: 2.01, z: 0.032761395}
+  m_Center: {x: -0.418, y: 1.00447, z: 0.01792346}
 --- !u!114 &1845103007435771429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,6 +64,7 @@ MonoBehaviour:
   syncInterval: 0.1
   doorState: 1
   speed: 0.5
+  visuals: {fileID: 633992154895944226}
 --- !u!114 &1845103007435771428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,14 +107,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7037502873690223870}
-  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1845103007435771434}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4870857509392642812
 MeshFilter:
   m_ObjectHideFlags: 0

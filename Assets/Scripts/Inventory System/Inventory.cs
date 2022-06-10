@@ -18,6 +18,7 @@ namespace Com.Dot.SZN.InventorySystem
         public int maxItems = 2;
 
         public Action<IReadOnlyCollection<string>, int> onSyncItems;
+        public Action<string> onRemoveItem;
 
         public override void OnStartClient()
         {
@@ -56,25 +57,46 @@ namespace Com.Dot.SZN.InventorySystem
             if (!(items.Count < maxItems)) { return; }
 
             items.Add(id);
-            GetItem(activeItem).OnAdd(netIdentity);
+
+            var item = GetItem(id);
+
+            if (item == null) { return; }
+
+            item.OnAdd(netIdentity);
         }
 
         [Command]
         void CmdRemoveItem(string id)
         {
+            var item = GetItem(id);
+
+            if (item != null)
+                item.OnRemove(netIdentity);
+
             items.Remove(id);
-            GetItem(activeItem).OnRemove(netIdentity);
         }
 
         [Command]
         void CmdChangeItem(int index)
         {
             activeItem = index;
-            GetItem(activeItem).OnEquip(netIdentity);
+
+            var item = GetItem(index);
+
+            if (item == null) { return; }
+
+            item.OnEquip(netIdentity);
         }
 
         [Command]
-        void CmdUseActiveItem() => GetItem(activeItem).OnUse(netIdentity);
+        void CmdUseActiveItem()
+        {
+            var item = GetItem(activeItem);
+
+            if (item == null) { return; }
+            
+            item.OnUse(netIdentity);
+        }
         #endregion // Commands
 
         #region Find Items
@@ -82,20 +104,27 @@ namespace Com.Dot.SZN.InventorySystem
 
         public void Start() => loadedItems = Resources.LoadAll<SimpleItem>("Items").ToList();
 
-        public SimpleItem GetItem(int id) => loadedItems.Find(i => i.id == items[id]);
+        public SimpleItem GetItem(int id)
+        {
+            if (!(items.Count > id)) { return null; }
+
+            return loadedItems.Find(i => i.id == items[id]);
+        }
+
+        public SimpleItem GetItem(string id) => loadedItems.Find(i => i.id == id);
         #endregion // Find Items
 
         void OnItemsUpdated(SyncList<string>.Operation op, int index, string oldItem, string newItem)
         {
-            onSyncItems?.Invoke(items.ToList().AsReadOnly(), activeItem);
-
             switch (op)
             {
                 case SyncList<string>.Operation.OP_ADD:
+                    onSyncItems?.Invoke(items.ToList().AsReadOnly(), activeItem);
                     break;
                 case SyncList<string>.Operation.OP_INSERT:
                     break;
                 case SyncList<string>.Operation.OP_REMOVEAT:
+                    onRemoveItem?.Invoke(oldItem);
                     break;
                 case SyncList<string>.Operation.OP_SET:
                     break;
